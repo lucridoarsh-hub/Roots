@@ -166,7 +166,6 @@ const Dashboard: React.FC = () => {
     undoLastDelete,
     lastDeletedId,
     filterState,
-    setFilterState,
   } = useMemories();
 
   const { user } = useAuth();
@@ -248,7 +247,7 @@ const Dashboard: React.FC = () => {
     setActiveVideo({ url, title });
   };
 
-  // ========== STATS ==========
+  // ========== STATS (kept for future use) ==========
   const stats = {
     total: memories.filter(m => !m.isDeleted).length,
     photos: memories.filter(m => m.mediaType === MediaType.PHOTO && !m.isDeleted).length,
@@ -349,7 +348,7 @@ const Dashboard: React.FC = () => {
               marginBottom: theme.spacing(4),
             }}
           >
-     (user as any).name 
+            {(user as any)?.name || 'User'}
           </h1>
           <p
             style={{
@@ -435,8 +434,6 @@ const Dashboard: React.FC = () => {
                   cursor: 'pointer',
                   transition: 'color 0.2s',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = theme.colors.amber[400])}
-                onMouseLeave={(e) => (e.currentTarget.style.color = theme.colors.amber[400])}
               >
                 <Undo2 size={16} /> Undo
               </button>
@@ -449,8 +446,6 @@ const Dashboard: React.FC = () => {
                   cursor: 'pointer',
                   transition: 'color 0.2s',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = theme.colors.white)}
-                onMouseLeave={(e) => (e.currentTarget.style.color = theme.colors.slate[700])}
               >
                 <X size={16} />
               </button>
@@ -494,7 +489,7 @@ const Dashboard: React.FC = () => {
                 }}
               >
                 Welcome{' '}
-                {localStorage.getItem('username') || (user as any).name?.split(' ')[0] || 'User'}
+                {localStorage.getItem('username') || (user as any)?.name?.split(' ')[0] || 'User'}
               </h2>
               <p
                 style={{
@@ -860,7 +855,7 @@ const Dashboard: React.FC = () => {
         <MemoryModal
           isOpen={isModalOpen}
           onClose={handleClose}
-          onSubmit={handleSave}
+          // onSave={handleSave}           {}
           initialData={editingMemory}
         />
         <VideoPlayerModal
