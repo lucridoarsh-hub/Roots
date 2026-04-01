@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation"; // Add this import
 
 // Types
 interface User {
@@ -33,6 +34,8 @@ interface Blog {
 }
 
 export default function Dashboard() {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
   const [activeSection, setActiveSection] = useState("dashboard");
   const [stats, setStats] = useState({ totalUsers: 0, totalMemories: 0, totalBlogs: 0 });
   const [users, setUsers] = useState<User[]>([]);
@@ -59,6 +62,28 @@ export default function Dashboard() {
   const [newMemoryImages, setNewMemoryImages] = useState<File[]>([]);
   const [isMemorySubmitting, setIsMemorySubmitting] = useState(false);
   const [memorySubmitMessage, setMemorySubmitMessage] = useState({ type: "", text: "" });
+
+  // Admin role check on mount
+  useEffect(() => {
+    const userStr = localStorage.getItem("user");
+    if (!userStr) {
+      router.push("/");
+      return;
+    }
+    try {
+      const user = JSON.parse(userStr);
+      // Check if the user has admin role
+      if (user.role !== "admin") {
+        router.push("/");
+        return;
+      }
+    } catch (error) {
+      console.error("Error parsing user from localStorage", error);
+      router.push("/");
+      return;
+    }
+    setIsLoading(false);
+  }, [router]);
 
   // Fetch all data
   const fetchAllData = async () => {
@@ -87,8 +112,10 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    fetchAllData();
-  }, []);
+    if (!isLoading) {
+      fetchAllData();
+    }
+  }, [isLoading]);
 
   // Blog handlers
   const handleBlogInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -797,6 +824,15 @@ export default function Dashboard() {
         return null;
     }
   };
+
+  // Show loading while checking admin status
+  if (isLoading) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", backgroundColor: colors.lightBg }}>
+        <div style={{ fontSize: "18px", color: colors.textMedium }}>Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <>

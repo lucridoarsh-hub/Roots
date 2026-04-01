@@ -188,6 +188,7 @@ const SignupPage: React.FC = () => {
 
       if (response.data.success) {
         localStorage.setItem("username", response.data.user.username);
+        localStorage.setItem("auth","true")
         login(email); // Update AuthContext
         router.push("/dashboard");
       } else {

@@ -8,20 +8,21 @@ import { cookies } from "next/headers";
 import User from "@/app/_backend/models/user.model";
 import UserMemory from "@/app/_backend/models/memory.model";
 
-/* ================= TYPES ================= */
+// ================= TYPES =================
+// These are the valid reaction types as stored in the database (lowercase)
+type StoredReactionType = "like" | "heart" | "smile";
+// Frontend uses uppercase; we'll convert internally
+type ApiReactionType = "LIKE" | "HEART" | "SMILE";
 
-type ReactionType = "like" | "heart" | "smile";
-
-/* ================= API ================= */
-
+// ================= API =================
 export async function POST(
   req: NextRequest,
-  context: { params: Promise<{ id: string }> } // ✅ Next.js 15
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectDB();
 
-    /* ================= PARAM ================= */
+    // ---------- Get memory ID ----------
     const { id } = await context.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -31,8 +32,7 @@ export async function POST(
       );
     }
 
-    /* ================= AUTH ================= */
-
+    // ---------- Authentication ----------
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
 
@@ -44,7 +44,6 @@ export async function POST(
     }
 
     let decoded: { id: string };
-
     try {
       decoded = jwt.verify(
         token,
@@ -58,7 +57,6 @@ export async function POST(
     }
 
     const user = await User.findById(decoded.id);
-
     if (!user) {
       return NextResponse.json(
         { success: false, message: "User not found" },
@@ -66,22 +64,36 @@ export async function POST(
       );
     }
 
-    /* ================= BODY ================= */
+    // ---------- Parse request body ----------
+    let body: { type: string };
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json(
+        { success: false, message: "Invalid JSON body" },
+        { status: 400 }
+      );
+    }
 
-    const body = await req.json();
-    const { type } = body as { type: ReactionType };
+    const { type } = body;
+    if (!type) {
+      return NextResponse.json(
+        { success: false, message: "Missing reaction type" },
+        { status: 400 }
+      );
+    }
 
-    if (!["like", "heart", "smile"].includes(type)) {
+    // Convert to lowercase for validation and storage
+    const normalizedType = type.toLowerCase();
+    if (!["like", "heart", "smile"].includes(normalizedType)) {
       return NextResponse.json(
         { success: false, message: "Invalid reaction type" },
         { status: 400 }
       );
     }
 
-    /* ================= MEMORY ================= */
-
+    // ---------- Find memory ----------
     const memory = await UserMemory.findById(id);
-
     if (!memory) {
       return NextResponse.json(
         { success: false, message: "Memory not found" },
@@ -91,54 +103,53 @@ export async function POST(
 
     const userId = user._id.toString();
 
-    /* ================= CLEAN INVALID ================= */
-
+    // ---------- Clean any malformed reactions ----------
     memory.reactions = (memory.reactions || []).filter(
       (r) => r && r.userId
     );
 
-    /* ================= TOGGLE ================= */
-
+    // ---------- Toggle reaction ----------
     const existingIndex = memory.reactions.findIndex(
       (r) => r.userId.toString() === userId
     );
 
     if (existingIndex !== -1) {
-      if (memory.reactions[existingIndex].type === type) {
-        // remove reaction
+      if (memory.reactions[existingIndex].type === normalizedType) {
+        // Remove reaction
         memory.reactions.splice(existingIndex, 1);
       } else {
-        // update reaction
-        memory.reactions[existingIndex].type = type;
+        // Change reaction type
+        memory.reactions[existingIndex].type = normalizedType as StoredReactionType;
       }
     } else {
-      // add reaction
+      // Add new reaction
       memory.reactions.push({
         userId: new mongoose.Types.ObjectId(user._id),
-        type,
+        type: normalizedType as StoredReactionType,
       });
     }
 
     await memory.save();
 
-    /* ================= COUNTS ================= */
-
-    const counts: Record<ReactionType, number> = {
-      like: 0,
-      heart: 0,
-      smile: 0,
+    // ---------- Build counts with uppercase keys ----------
+    const counts = {
+      LIKE: 0,
+      HEART: 0,
+      SMILE: 0,
     };
 
     memory.reactions.forEach((r) => {
-      if (counts[r.type] !== undefined) {
-        counts[r.type]++;
-      }
+      const key = r.type.toUpperCase() as ApiReactionType;
+      counts[key]++;
     });
 
-    const userReaction =
-      memory.reactions.find(
-        (r) => r.userId.toString() === userId
-      )?.type || null;
+    // Find current user's reaction (return uppercase)
+    const currentReaction = memory.reactions.find(
+      (r) => r.userId.toString() === userId
+    );
+    const userReaction = currentReaction
+      ? (currentReaction.type.toUpperCase() as ApiReactionType)
+      : null;
 
     return NextResponse.json(
       {
@@ -150,7 +161,6 @@ export async function POST(
     );
   } catch (error: any) {
     console.error("❌ toggleReaction Error:", error);
-
     return NextResponse.json(
       {
         success: false,

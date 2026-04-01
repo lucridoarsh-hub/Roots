@@ -44,6 +44,26 @@ export const useMemories = () => {
 const transformMemory = (backend: any): Memory => {
   const memoryDate = new Date(backend.date);
 
+  // Normalize reactions: ensure type is uppercase and userId is a string
+  const normalizedReactions = (backend.reactions || []).map((reaction: any) => {
+    let userId = reaction.userId;
+    // If userId is a populated user object, extract the _id string
+    if (userId && typeof userId === 'object' && userId._id) {
+      userId = userId._id.toString();
+    } else if (userId && typeof userId === 'object' && userId.id) {
+      userId = userId.id.toString();
+    } else if (userId && typeof userId !== 'string') {
+      // Fallback: convert to string if it's an ObjectId
+      userId = userId.toString();
+    }
+
+    return {
+      userId: userId,
+      userName: reaction.userName || 'User', // optional, may not be present
+      type: reaction.type.toUpperCase(), // ✅ convert to uppercase
+    };
+  });
+
   return {
     id: backend._id,
     ownerId: backend.userId?._id || backend.ownerId || "",
@@ -60,7 +80,7 @@ const transformMemory = (backend: any): Memory => {
       publicId: img.publicId,
       caption: img.caption || "",
     })),
-    reactions: backend.reactions || [],
+    reactions: normalizedReactions,  // ✅ now uppercase types, string userIds
     comments: backend.comments || [],
     isPrivate: backend.isPrivate ?? false,
     createdAt: backend.createdAt
@@ -70,7 +90,6 @@ const transformMemory = (backend: any): Memory => {
       : Date.now(),
     isDeleted: false,
     collaborators: backend.collaborators || [],
-    // Optional fields (defaults to undefined)
     summary: backend.summary,
     history: backend.history || [],
     lastEditedBy: backend.lastEditedBy,

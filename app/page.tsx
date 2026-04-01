@@ -450,48 +450,42 @@ const LandingPage: React.FC = () => {
           }}
         >
           {/* Logo */}
-          <div style={{ display: "flex", alignItems: "center", gap: theme.spacing(2) }}>
-            {dynamicSettings.logoUrl ? (
-              <img
-                src={dynamicSettings.logoUrl}
-                style={{
-                  width: theme.spacing(7),
-                  height: theme.spacing(7),
-                  borderRadius: theme.borderRadius.lg,
-                  objectFit: "cover",
-                }}
-                alt="Logo"
-              />
-            ) : (
-              <div
-                style={{
-                  width: theme.spacing(7),
-                  height: theme.spacing(7),
-                  backgroundColor: theme.colors.brand[900],
-                  borderRadius: theme.borderRadius.lg,
-                  ...flexCenter,
-                  color: theme.colors.white,
-                  fontFamily: theme.fontFamily.serif,
-                  fontWeight: "bold",
-                  fontSize: theme.fontSize.lg,
-                }}
-              >
-                {dynamicSettings.appName[0]}
-              </div>
-            )}
-            <span
-              style={{
-                fontSize: isMdUp ? theme.fontSize["2xl"] : theme.fontSize.xl,
-                fontFamily: theme.fontFamily.serif,
-                fontWeight: "bold",
-                color: theme.colors.brand[900],
-                letterSpacing: "-0.025em",
-              }}
-            >
-              {dynamicSettings.appName}.
-            </span>
-          </div>
-
+         <div style={{ display: "flex", alignItems: "center", gap: theme.spacing(2) }}>
+  {dynamicSettings.logoUrl ? (
+    <img
+      src={dynamicSettings.logoUrl}
+      style={{
+        width: theme.spacing(10),
+        height: theme.spacing(10),
+        borderRadius: theme.borderRadius.lg,
+        objectFit: "cover",
+      }}
+      alt="Logo"
+    />
+  ) : (
+    <img
+      src="/logo.png"
+      style={{
+        width: theme.spacing(10),
+        height: theme.spacing(10),
+        borderRadius: theme.borderRadius.lg,
+        objectFit: "cover",
+      }}
+      alt="Logo"
+    />
+  )}
+  <span
+    style={{
+      fontSize: isMdUp ? theme.fontSize["2xl"] : theme.fontSize.xl,
+      fontFamily: theme.fontFamily.serif,
+      fontWeight: "bold",
+      color: theme.colors.brand[900],
+      letterSpacing: "-0.025em",
+    }}
+  >
+    {dynamicSettings.appName}.
+  </span>
+</div>
           {/* Desktop nav links */}
           {isMdUp && (
             <div style={{ display: "flex", alignItems: "center", gap: theme.spacing(5) }}>

@@ -315,6 +315,7 @@ const Profile: React.FC = () => {
           paddingBottom: theme.spacing(20),
           transition: `background-color 300ms ${theme.transition.DEFAULT}`,
           fontSize: theme.fontSize.base,
+          paddingTop: 'env(safe-area-inset-top)',
         }}
       >
         {/* Header - Fixed for safe area & responsive height */}
@@ -324,7 +325,6 @@ const Profile: React.FC = () => {
             backgroundColor: headerBg,
             position: 'relative',
             overflow: 'hidden',
-            paddingTop: 'env(safe-area-inset-top)',
           }}
         >
           <div
@@ -362,10 +362,11 @@ const Profile: React.FC = () => {
                 alignItems: isMdUp ? 'flex-end' : 'flex-start',
                 gap: theme.spacing(6),
                 width: '100%',
+                flexWrap: 'wrap',
               }}
             >
               {/* Avatar with hover effect */}
-              <div style={{ position: 'relative' }}>
+              <div style={{ position: 'relative', flexShrink: 0 }}>
                 <div
                   style={{
                     width: avatarSize,
@@ -410,7 +411,7 @@ const Profile: React.FC = () => {
               </div>
 
               {/* User info */}
-              <div style={{ flex: 1, textAlign: 'left' }}>
+              <div style={{ flex: 1, textAlign: 'left', minWidth: 0 }}>
                 <h1
                   style={{
                     fontSize: isMdUp ? theme.fontSize['4xl'] : theme.fontSize['3xl'],
@@ -586,10 +587,10 @@ const Profile: React.FC = () => {
               </h3>
               <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing(3), color: textSecondary, fontSize: theme.fontSize.sm, flexWrap: 'wrap' }}>
                 <Calendar size={16} style={{ color: getIconColor(theme.colors.brand[500]) }} /> Member since{' '}
-              {new Date((user as any)?.joinDate || Date.now()).toLocaleDateString(
-  undefined,
-  { month: 'long', year: 'numeric' }
-)}
+                {new Date((user as any)?.joinDate || Date.now()).toLocaleDateString(
+                  undefined,
+                  { month: 'long', year: 'numeric' }
+                )}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: theme.spacing(3), color: textSecondary, fontSize: theme.fontSize.sm }}>
                 <ShieldCheck size={16} style={{ color: getIconColor(theme.colors.emerald[500]) }} /> End-to-end Encrypted
@@ -623,7 +624,7 @@ const Profile: React.FC = () => {
               backgroundColor: modalBg,
               width: '100%',
               maxWidth: '32rem',
-           borderRadius: theme.borderRadius['2xl'],
+              borderRadius: theme.borderRadius['2xl'],
               boxShadow: theme.boxShadow['2xl'],
               overflow: 'hidden',
               border: `1px solid rgba(255,255,255,0.1)`,
@@ -786,7 +787,7 @@ const Profile: React.FC = () => {
               backgroundColor: modalBg,
               width: '100%',
               maxWidth: '32rem',
-            borderRadius: theme.borderRadius['2xl'],
+              borderRadius: theme.borderRadius['2xl'],
               boxShadow: theme.boxShadow['2xl'],
               overflow: 'hidden',
               border: `1px solid rgba(255,255,255,0.1)`,

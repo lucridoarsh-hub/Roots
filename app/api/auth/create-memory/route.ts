@@ -2,21 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 
-import { cloudinary } from "../../../_backend/libs/cloudinary";
-import { connectDB } from "../../../_backend/libs/db";
+import { cloudinary } from "@/app/_backend/libs/cloudinary";
+import { connectDB } from "@/app/_backend/libs/db";
 import { cookies } from "next/headers";
 
-import User from "@/app/_backend/models/user.model"; // ✅ FIXED
+import User from "@/app/_backend/models/user.model";
 import UserMemory from "@/app/_backend/models/memory.model";
-
-/* ================= CREATE MEMORY ================= */
 
 export async function POST(req: NextRequest) {
   try {
     await connectDB();
 
     /* ================= AUTH ================= */
-
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
 
@@ -51,26 +48,23 @@ export async function POST(req: NextRequest) {
     }
 
     /* ================= FORM DATA ================= */
-
     const formData = await req.formData();
 
     const title = formData.get("title") as string;
     const lifeStage = formData.get("lifeStage") as string;
-    const description = formData.get("description") as string;
+    const description = formData.get("description") as string | null; // can be null
     const date = formData.get("date") as string;
-
-    const isPrivateRaw = formData.get("isPrivate"); // 👈 FIX
-    const isPrivate = isPrivateRaw === "true"; // ✅ DEFAULT false
-
+    const isPrivateRaw = formData.get("isPrivate");
+    const isPrivate = isPrivateRaw === "true";
     const files = formData.getAll("images") as File[];
 
     /* ================= VALIDATION ================= */
-
-    if (!title || !lifeStage || !description || !date) {
+    // description is no longer required
+    if (!title || !lifeStage || !date) {
       return NextResponse.json(
         {
           success: false,
-          message: "title, lifeStage, description and date are required",
+          message: "title, lifeStage and date are required",
         },
         { status: 400 }
       );
@@ -91,7 +85,6 @@ export async function POST(req: NextRequest) {
     }
 
     /* ================= UPLOAD IMAGES ================= */
-
     const images: { publicId: string; url: string }[] = [];
 
     for (const file of files) {
@@ -116,15 +109,14 @@ export async function POST(req: NextRequest) {
     }
 
     /* ================= CREATE MEMORY ================= */
-
     const memory = await UserMemory.create({
       userId: new mongoose.Types.ObjectId(user._id),
       title,
       lifeStage,
-      description,
+      description: description || "",   // if null/undefined, store empty string
       date: new Date(date),
       images,
-      isPrivate, // ✅ FIXED (default false)
+      isPrivate,
     });
 
     return NextResponse.json(
