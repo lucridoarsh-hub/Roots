@@ -1,7 +1,9 @@
+// app/page.tsx (or pages/index.tsx)
 "use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Head from "next/head";
 import {
   ArrowRight,
   Shield,
@@ -38,104 +40,18 @@ import {
   X,
   User,
 } from "lucide-react";
-import Footer from "./Footer"; // adjust the import path as needed
-import { useAuth } from "../context/AuthContext"; // adjust the import path as needed
-import { APP_NAME, TESTIMONIALS } from "../constants"; // adjust the import path as needed
+import Footer from "./components/Footer";
+import { useAuth } from "../context/AuthContext";
+import { APP_NAME, TESTIMONIALS } from "../constants";
+import theme from "./theme"; // <-- imported design system
 
-// ========== THEME CONSTANTS (exact Tailwind values) ==========
-const theme = {
-  colors: {
-    brand: {
-      50: "#eff6ff",
-      100: "#dbeafe",
-      200: "#bfdbfe",
-      300: "#93c5fd",
-      400: "#60a5fa",
-      500: "#3b82f6",
-      600: "#2563eb",
-      700: "#1d4ed8",
-      800: "#1e40af",
-      900: "#1e3a8a",
-    },
-    amber: {
-      400: "#fbbf24",
-    },
-    gray: {
-      50: "#f9fafb",
-      100: "#f3f4f6",
-      200: "#e5e7eb",
-      300: "#d1d5db",
-      400: "#9ca3af",
-      500: "#6b7280",
-      600: "#4b5563",
-      700: "#374151",
-      800: "#1f2937",
-      900: "#111827",
-    },
-    white: "#ffffff",
-    black: "#000000",
-  },
-  spacing: (n: number) => `${n * 0.25}rem`,
-  fontSize: {
-    xs: "0.75rem",
-    sm: "0.875rem",
-    base: "1rem",
-    lg: "1.125rem",
-    xl: "1.25rem",
-    "2xl": "1.5rem",
-    "3xl": "1.875rem",
-    "4xl": "2.25rem",
-    "5xl": "3rem",
-    "6xl": "3.75rem",
-    "7xl": "4.5rem",
-  },
-  borderRadius: {
-    none: "0",
-    sm: "0.125rem",
-    base: "0.25rem",
-    md: "0.375rem",
-    lg: "0.5rem",
-    xl: "0.75rem",
-    "2xl": "1rem",
-    "3xl": "1.5rem",
-    full: "9999px",
-  },
-  boxShadow: {
-    sm: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
-    DEFAULT:
-      "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
-    md: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
-    lg: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
-    xl: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
-    "2xl": "0 25px 50px -12px rgb(0 0 0 / 0.25)",
-  },
-  fontFamily: {
-    sans: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-    serif: 'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
-  },
-  transition: {
-    DEFAULT: "all 0.3s ease",
-  },
-  zIndex: {
-    0: 0,
-    10: 10,
-    20: 20,
-    30: 30,
-    40: 40,
-    50: 50,
-    60: 60,
-  },
-};
-
-// ========== RESPONSIVE HOOK ==========
+// ========== RESPONSIVE & DARK MODE HOOKS ==========
 const useMediaQuery = (query: string) => {
   const [matches, setMatches] = useState(false);
 
   useEffect(() => {
     const media = window.matchMedia(query);
-    if (media.matches !== matches) {
-      setMatches(media.matches);
-    }
+    if (media.matches !== matches) setMatches(media.matches);
     const listener = (e: MediaQueryListEvent) => setMatches(e.matches);
     media.addEventListener("change", listener);
     return () => media.removeEventListener("change", listener);
@@ -143,6 +59,8 @@ const useMediaQuery = (query: string) => {
 
   return matches;
 };
+
+const useDarkMode = () => useMediaQuery("(prefers-color-scheme: dark)");
 
 // ========== STYLE UTILITIES ==========
 const flexCenter = {
@@ -157,14 +75,40 @@ const flexBetween = {
   justifyContent: "space-between",
 } as const;
 
-const flexCol = {
-  display: "flex",
-  flexDirection: "column",
-} as const;
-
-// ========== COMPONENT ==========
+// ========== MAIN COMPONENT ==========
 const LandingPage: React.FC = () => {
   const { isAuthenticated } = useAuth();
+  const isDark = useDarkMode();
+  const isSmUp = useMediaQuery("(min-width: 640px)");
+  const isMdUp = useMediaQuery("(min-width: 768px)");
+  const isLgUp = useMediaQuery("(min-width: 1024px)");
+
+  // Choose light/dark palette from theme
+  const palette = isDark ? theme.dark : theme.light;
+
+  // Derived styles using theme primitives
+  const bgColor = palette.bg;
+  const textPrimary = palette.text;
+  const textSecondary = palette.textMuted;
+  const borderColor = isDark ? theme.colors.brand[800] : theme.colors.stone[200];
+  const navBg = isDark
+    ? theme.colors.brand[900] + "E6"
+    : "rgba(255,255,255,0.9)";
+  const navBorder = isDark ? theme.colors.brand[700] : theme.colors.stone[200];
+  const linkHoverColor = isDark ? theme.colors.brand[300] : theme.colors.brand[600];
+  const heroGradient = isDark
+    ? `radial-gradient(circle at top right, ${theme.colors.brand[800]}, ${theme.colors.brand[950]})`
+    : `radial-gradient(circle at top right, ${theme.colors.brand[200]}, ${theme.colors.stone[50]}, ${theme.colors.white})`;
+  const whoBg = isDark ? theme.colors.brand[800] : theme.colors.brand[800];
+  const whoText = isDark ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.6)";
+  const testimonialBg = isDark ? theme.colors.brand[950] : theme.colors.stone[50];
+  const testimonialCardBg = palette.bgCard;
+  const testimonialCardBorder = isDark ? theme.colors.brand[800] : theme.colors.stone[200];
+  const howBg = isDark ? theme.colors.brand[950] : theme.colors.stone[50];
+  const stepCircleBg = theme.colors.brand[500];
+  const stepText = textPrimary; 
+  const stepDesc = textSecondary;
+
   const [dynamicSettings, setDynamicSettings] = useState({
     appName: APP_NAME,
     logoUrl: "",
@@ -179,15 +123,11 @@ const LandingPage: React.FC = () => {
   // Mobile menu state
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Responsive breakpoints
-  const isSmUp = useMediaQuery("(min-width: 640px)");
-  const isMdUp = useMediaQuery("(min-width: 768px)");
-  const isLgUp = useMediaQuery("(min-width: 1024px)");
-
   useEffect(() => {
     const saved = localStorage.getItem("roots_app_settings");
     if (saved) {
       const parsed = JSON.parse(saved);
+      
       setDynamicSettings({
         appName: parsed.appName || APP_NAME,
         logoUrl: parsed.logoUrl || "",
@@ -203,14 +143,6 @@ const LandingPage: React.FC = () => {
 
   const prevSlide = () => {
     setActiveIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
-  };
-
-  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
-    e.preventDefault();
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-    }
   };
 
   // Maintenance mode
@@ -234,7 +166,7 @@ const LandingPage: React.FC = () => {
           style={{
             backgroundColor: "rgba(255,255,255,0.1)",
             padding: theme.spacing(8),
-            borderRadius: "3rem",
+            borderRadius: theme.borderRadius["3xl"],
             backdropFilter: "blur(8px)",
             border: "1px solid rgba(255,255,255,0.2)",
             maxWidth: "448px",
@@ -278,19 +210,45 @@ const LandingPage: React.FC = () => {
               margin: "0 auto",
               borderRadius: theme.borderRadius.full,
             }}
-          ></div>
+          />
         </div>
       </div>
     );
   }
 
   return (
+    <>
+        <Head>
+        {/* Primary Meta Tags */}
+        <title>Enduring Roots — Preserve Your Life's Most Cherished Memories</title>
+        <meta name="title" content="Enduring Roots — Preserve Your Life's Most Cherished Memories" />
+        <meta name="description" content="Enduring Roots helps you capture, organize, and share your personal legacy. Build a beautiful timeline of life memories to pass down to the people who matter most." />
+        <meta name="keywords" content="memory preservation, digital legacy, family history, life timeline, personal memories, legacy platform, memory journal" />
+        <meta name="robots" content="index, follow" />
+        <meta name="author" content="Enduring Roots" />
+        <link rel="canonical" href="https://www.enduringroots.in/" />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.enduringroots.in/" />
+        <meta property="og:title" content="Enduring Roots — Preserve Your Life's Most Cherished Memories" />
+        <meta property="og:description" content="Capture, organize, and share your personal legacy. Build a beautiful timeline of life memories for the people who matter most." />
+        <meta property="og:image" content="https://www.enduringroots.in/assets/og-home.jpg" />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://www.enduringroots.in/" />
+        <meta name="twitter:title" content="Enduring Roots — Preserve Your Life's Most Cherished Memories" />
+        <meta name="twitter:description" content="Capture, organize, and share your personal legacy. Build a beautiful timeline of life memories for the people who matter most." />
+        <meta name="twitter:image" content="https://www.enduringroots.in/assets/og-home.jpg" />
+      </Head>
     <div
       style={{
         minHeight: "100vh",
-        backgroundColor: theme.colors.white,
+        backgroundColor: bgColor,
         fontFamily: theme.fontFamily.sans,
-        color: theme.colors.gray[800],
+        color: textPrimary,
+        transition: `background-color 500ms ${theme.transition.DEFAULT}`,
       }}
     >
       {/* ===== GLOBAL STYLES (animations + responsive utilities) ===== */}
@@ -384,7 +342,7 @@ const LandingPage: React.FC = () => {
             left: calc(10% + 16px);
             right: calc(10% + 16px);
             height: 2px;
-            background: linear-gradient(90deg, #c8d4f5, #4a6fd4);
+            background: linear-gradient(90deg, ${theme.colors.brand[200]}, ${theme.colors.brand[600]});
             z-index: 0;
           }
         }
@@ -420,7 +378,7 @@ const LandingPage: React.FC = () => {
             paddingRight: theme.spacing(4),
             position: "sticky",
             top: 0,
-            zIndex: theme.zIndex[60],
+            zIndex: 60,
           }}
         >
           <Info size={14} style={{ animation: "bounce 1s infinite" }} />
@@ -429,382 +387,344 @@ const LandingPage: React.FC = () => {
       )}
 
       {/* ===== NAVIGATION ===== */}
-      <nav
-        style={{
-          position: "fixed",
-          width: "100%",
-          zIndex: theme.zIndex[50],
-          backgroundColor: "rgba(255,255,255,0.9)",
-          backdropFilter: "blur(8px)",
-          borderBottom: `1px solid ${theme.colors.gray[100]}`,
-          transition: theme.transition.DEFAULT,
-          top: dynamicSettings.announcement ? theme.spacing(8) : 0,
-        }}
-      >
-        <div
-          style={{
-            maxWidth: "1280px",
-            margin: "0 auto",
-            padding: `${theme.spacing(3)} ${theme.spacing(4)}`,
-            ...flexBetween,
-          }}
-        >
-          {/* Logo */}
-         <div style={{ display: "flex", alignItems: "center", gap: theme.spacing(2) }}>
-  {dynamicSettings.logoUrl ? (
-    <img
-      src={dynamicSettings.logoUrl}
-      style={{
-        width: theme.spacing(10),
-        height: theme.spacing(10),
-        borderRadius: theme.borderRadius.lg,
-        objectFit: "cover",
-      }}
-      alt="Logo"
-    />
-  ) : (
-    <img
-      src="/logo.png"
-      style={{
-        width: theme.spacing(10),
-        height: theme.spacing(10),
-        borderRadius: theme.borderRadius.lg,
-        objectFit: "cover",
-      }}
-      alt="Logo"
-    />
-  )}
-  <span
+   <nav
     style={{
-      fontSize: isMdUp ? theme.fontSize["2xl"] : theme.fontSize.xl,
-      fontFamily: theme.fontFamily.serif,
-      fontWeight: "bold",
-      color: theme.colors.brand[900],
-      letterSpacing: "-0.025em",
+      position: "relative",
+      width: "100%",
+      zIndex: 50,
+      backgroundColor: isDark
+        ? "rgba(20, 35, 20, 0.95)"
+        : "rgba(252, 251, 248, 0.97)",
+      backdropFilter: "blur(12px)",
+      WebkitBackdropFilter: "blur(12px)",
+      borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.07)"}`,
+      boxShadow: isDark
+        ? "0 1px 24px rgba(0,0,0,0.4)"
+        : "0 1px 20px rgba(44, 74, 46, 0.08)",
+      transition: "all 0.3s ease",
+      top: dynamicSettings.announcement ? theme.spacing(8) : 0,
     }}
   >
-    {dynamicSettings.appName}.
-  </span>
-</div>
-          {/* Desktop nav links */}
-          {isMdUp && (
-            <div style={{ display: "flex", alignItems: "center", gap: theme.spacing(5) }}>
+    <div
+      style={{
+        maxWidth: "1280px",
+        margin: "0 auto",
+        padding: `0 ${theme.spacing(8)}`,
+        height: "100px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+      }}
+    >
+      {/* Logo */}
+      <Link
+        href="/"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          textDecoration: "none",
+          flexShrink: 0,
+        }}
+      >
+        <img
+          src="/logo.png"
+          style={{
+            width: "220px",
+            height: "220px",
+            objectFit: "contain",
+            transition: "transform 0.2s ease",
+          }}
+          alt="Enduring Roots Logo"
+          onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+          onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+        />
+      </Link>
+  
+      {/* Desktop nav links */}
+      {isMdUp && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "2px",
+            position: "absolute",
+            left: "50%",
+            transform: "translateX(-50%)",
+          }}
+        >
+          {["Home", "About", "Blog", "Success Stories", "Contact"].map((label) => {
+            const href =
+              label === "Home"
+                ? "/"
+                : `/${label.toLowerCase().replace(/\s+/g, "-")}`;
+            return (
               <Link
-                href="/"
+                key={label}
+                href={href}
                 style={{
-                  fontSize: theme.fontSize.sm,
+                  fontSize: "13.5px",
                   fontWeight: 500,
-                  color: theme.colors.gray[600],
+                  color: isDark ? "rgba(200,220,200,0.85)" : "#4A6741",
                   textDecoration: "none",
-                  transition: "color 0.2s",
+                  padding: "6px 14px",
+                  borderRadius: "8px",
+                  transition: "all 0.18s ease",
+                  letterSpacing: "0.01em",
+                  position: "relative",
                 }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.color = theme.colors.brand[700])
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.color = theme.colors.gray[600])
-                }
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = isDark ? "#fff" : "#2C4A2E";
+                  e.currentTarget.style.backgroundColor = isDark
+                    ? "rgba(255,255,255,0.06)"
+                    : "rgba(44,74,46,0.07)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = isDark
+                    ? "rgba(200,220,200,0.85)"
+                    : "#4A6741";
+                  e.currentTarget.style.backgroundColor = "transparent";
+                }}
               >
-                Home
+                {label}
               </Link>
-              <Link
-                href="/about"
-                style={{
-                  fontSize: theme.fontSize.sm,
-                  fontWeight: 500,
-                  color: theme.colors.gray[600],
-                  textDecoration: "none",
-                  transition: "color 0.2s",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.color = theme.colors.brand[700])
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.color = theme.colors.gray[600])
-                }
-              >
-                About
-              </Link>
-              <Link
-                href="/blog"
-                style={{
-                  fontSize: theme.fontSize.sm,
-                  fontWeight: 500,
-                  color: theme.colors.gray[600],
-                  textDecoration: "none",
-                  transition: "color 0.2s",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.color = theme.colors.brand[700])
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.color = theme.colors.gray[600])
-                }
-              >
-                Blog
-              </Link>
-              <Link
-                href="/success-stories"
-                style={{
-                  fontSize: theme.fontSize.sm,
-                  fontWeight: 500,
-                  color: theme.colors.gray[600],
-                  textDecoration: "none",
-                  transition: "color 0.2s",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.color = theme.colors.brand[700])
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.color = theme.colors.gray[600])
-                }
-              >
-                Success Stories
-              </Link>
-              <Link
-                href="/contact"
-                style={{
-                  fontSize: theme.fontSize.sm,
-                  fontWeight: 500,
-                  color: theme.colors.gray[600],
-                  textDecoration: "none",
-                  transition: "color 0.2s",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.color = theme.colors.brand[700])
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.color = theme.colors.gray[600])
-                }
-              >
-                Contact
-              </Link>
-            </div>
-          )}
-
-          {/* Auth buttons & mobile menu toggle */}
-          <div style={{ display: "flex", alignItems: "center", gap: theme.spacing(3) }}>
-            {isAuthenticated ? (
-              <Link
-                href="/dashboard"
-                style={{
-                  padding: `${theme.spacing(2)} ${theme.spacing(4)}`,
-                  backgroundColor: theme.colors.brand[900],
-                  color: theme.colors.white,
-                  fontSize: isMdUp ? theme.fontSize.sm : theme.fontSize.xs,
-                  fontWeight: 500,
-                  borderRadius: theme.borderRadius.full,
-                  textDecoration: "none",
-                  transition: "all 0.2s",
-                  boxShadow: `0 10px 15px -3px ${theme.colors.brand[900]}33`,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: theme.spacing(1.5),
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.backgroundColor = theme.colors.brand[800])
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.backgroundColor = theme.colors.brand[900])
-                }
-              >
-                <LayoutDashboard size={isMdUp ? 16 : 14} />
-                {isMdUp ? "Go to Dashboard" : "Dashboard"}
-              </Link>
-            ) : (
-              <>
-                <Link
-                  href="/login"
-                  style={{
-                    fontSize: theme.fontSize.sm,
-                    fontWeight: 500,
-                    color: theme.colors.gray[600],
-                    textDecoration: "none",
-                    transition: "color 0.2s",
-                    display: isMdUp ? "inline" : "none",
-                  }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.color = theme.colors.brand[600])
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.color = theme.colors.gray[600])
-                  }
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/signup"
-                  style={{
-                    padding: `${theme.spacing(2)} ${theme.spacing(4)}`,
-                    backgroundColor: theme.colors.brand[900],
-                    color: theme.colors.white,
-                    fontSize: isMdUp ? theme.fontSize.sm : theme.fontSize.xs,
-                    fontWeight: 500,
-                    borderRadius: theme.borderRadius.full,
-                    textDecoration: "none",
-                    transition: "all 0.2s",
-                    boxShadow: `0 10px 15px -3px ${theme.colors.brand[900]}33`,
-                  }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor = theme.colors.brand[800])
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.backgroundColor = theme.colors.brand[900])
-                  }
-                >
-                  {isMdUp ? "Get Started" : "Sign Up"}
-                </Link>
-              </>
-            )}
-            {/* Mobile menu button */}
-            {!isMdUp && (
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  padding: theme.spacing(1),
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: theme.colors.brand[900],
-                }}
-              >
-                {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-              </button>
-            )}
-          </div>
+            );
+          })}
         </div>
-
-        {/* Mobile dropdown menu */}
-        {!isMdUp && mobileMenuOpen && (
-          <div
+      )}
+  
+      {/* Auth buttons */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: theme.spacing(2),
+          flexShrink: 0,
+        }}
+      >
+        {isAuthenticated ? (
+          <Link
+            href="/dashboard"
             style={{
-              position: "absolute",
-              top: "100%",
-              left: 0,
-              right: 0,
-              backgroundColor: "rgba(255,255,255,0.95)",
-              backdropFilter: "blur(8px)",
-              borderBottom: `1px solid ${theme.colors.gray[100]}`,
-              padding: theme.spacing(4),
+              padding: "9px 20px",
+              backgroundColor: "#2C4A2E",
+              color: "#fff",
+              fontSize: "13.5px",
+              fontWeight: 600,
+              borderRadius: "10px",
+              textDecoration: "none",
               display: "flex",
-              flexDirection: "column",
-              gap: theme.spacing(3),
-              zIndex: theme.zIndex[40],
-              boxShadow: theme.boxShadow.lg,
+              alignItems: "center",
+              gap: "7px",
+              transition: "all 0.2s ease",
+              boxShadow: "0 2px 8px rgba(44,74,46,0.3)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "#3a5e3c";
+              e.currentTarget.style.boxShadow = "0 4px 14px rgba(44,74,46,0.4)";
+              e.currentTarget.style.transform = "translateY(-1px)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "#2C4A2E";
+              e.currentTarget.style.boxShadow = "0 2px 8px rgba(44,74,46,0.3)";
+              e.currentTarget.style.transform = "translateY(0)";
             }}
           >
+            <LayoutDashboard size={15} />
+            Dashboard
+          </Link>
+        ) : (
+          <>
+            {isMdUp && (
+              <Link
+                href="/login"
+                style={{
+                  fontSize: "13.5px",
+                  fontWeight: 500,
+                  color: isDark ? "rgba(200,220,200,0.85)" : "#4A6741",
+                  textDecoration: "none",
+                  padding: "9px 16px",
+                  borderRadius: "10px",
+                  transition: "all 0.18s ease",
+                  border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(74,103,65,0.2)"}`,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = isDark ? "#fff" : "#2C4A2E";
+                  e.currentTarget.style.backgroundColor = isDark
+                    ? "rgba(255,255,255,0.06)"
+                    : "rgba(44,74,46,0.06)";
+                  e.currentTarget.style.borderColor = isDark
+                    ? "rgba(255,255,255,0.15)"
+                    : "rgba(44,74,46,0.35)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = isDark
+                    ? "rgba(200,220,200,0.85)"
+                    : "#4A6741";
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.borderColor = isDark
+                    ? "rgba(255,255,255,0.08)"
+                    : "rgba(74,103,65,0.2)";
+                }}
+              >
+                Sign In
+              </Link>
+            )}
             <Link
-              href="/"
+              href="/signup"
               style={{
-                fontSize: theme.fontSize.base,
-                fontWeight: 500,
-                color: theme.colors.gray[700],
+                padding: "9px 20px",
+                background: "linear-gradient(135deg, #2C4A2E 0%, #3d6640 100%)",
+                color: "#fff",
+                fontSize: "13.5px",
+                fontWeight: 600,
+                borderRadius: "10px",
                 textDecoration: "none",
-                padding: `${theme.spacing(2)} ${theme.spacing(4)}`,
-                transition: "background-color 0.2s",
-                borderRadius: theme.borderRadius.md,
+                transition: "all 0.2s ease",
+                boxShadow: "0 2px 8px rgba(44,74,46,0.3)",
+                letterSpacing: "0.01em",
               }}
-              onClick={() => setMobileMenuOpen(false)}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor = theme.colors.brand[50])
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = "transparent")
-              }
-            >
-              Home
-            </Link>
-            <Link
-              href="/about"
-              style={{
-                fontSize: theme.fontSize.base,
-                fontWeight: 500,
-                color: theme.colors.gray[700],
-                textDecoration: "none",
-                padding: `${theme.spacing(2)} ${theme.spacing(4)}`,
-                transition: "background-color 0.2s",
-                borderRadius: theme.borderRadius.md,
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = "0 4px 16px rgba(44,74,46,0.45)";
+                e.currentTarget.style.transform = "translateY(-1px)";
               }}
-              onClick={() => setMobileMenuOpen(false)}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor = theme.colors.brand[50])
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = "transparent")
-              }
-            >
-              About
-            </Link>
-            <Link
-              href="/blog"
-              style={{
-                fontSize: theme.fontSize.base,
-                fontWeight: 500,
-                color: theme.colors.gray[700],
-                textDecoration: "none",
-                padding: `${theme.spacing(2)} ${theme.spacing(4)}`,
-                transition: "background-color 0.2s",
-                borderRadius: theme.borderRadius.md,
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = "0 2px 8px rgba(44,74,46,0.3)";
+                e.currentTarget.style.transform = "translateY(0)";
               }}
-              onClick={() => setMobileMenuOpen(false)}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor = theme.colors.brand[50])
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = "transparent")
-              }
             >
-              Blog
+              {isMdUp ? "Get Started" : "Sign Up"}
             </Link>
-            <Link
-              href="/success-stories"
-              style={{
-                fontSize: theme.fontSize.base,
-                fontWeight: 500,
-                color: theme.colors.gray[700],
-                textDecoration: "none",
-                padding: `${theme.spacing(2)} ${theme.spacing(4)}`,
-                transition: "background-color 0.2s",
-                borderRadius: theme.borderRadius.md,
-              }}
-              onClick={() => setMobileMenuOpen(false)}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor = theme.colors.brand[50])
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = "transparent")
-              }
-            >
-              Success Stories
-            </Link>
-            <Link
-              href="/contact"
-              style={{
-                fontSize: theme.fontSize.base,
-                fontWeight: 500,
-                color: theme.colors.gray[700],
-                textDecoration: "none",
-                padding: `${theme.spacing(2)} ${theme.spacing(4)}`,
-                transition: "background-color 0.2s",
-                borderRadius: theme.borderRadius.md,
-              }}
-              onClick={() => setMobileMenuOpen(false)}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor = theme.colors.brand[50])
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = "transparent")
-              }
-            >
-              Contact
-            </Link>
-          </div>
+          </>
         )}
-      </nav>
-
+  
+        {/* Mobile menu button */}
+        {!isMdUp && (
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            style={{
+              background: isDark ? "rgba(255,255,255,0.06)" : "rgba(44,74,46,0.07)",
+              border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(44,74,46,0.15)"}`,
+              cursor: "pointer",
+              padding: "8px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "8px",
+              color: isDark ? "#a8c5a0" : "#2C4A2E",
+              transition: "all 0.18s ease",
+            }}
+          >
+            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        )}
+      </div>
+    </div>
+  
+    {/* Mobile dropdown */}
+    {!isMdUp && mobileMenuOpen && (
+      <div
+        style={{
+          position: "absolute",
+          top: "100%",
+          left: 0,
+          right: 0,
+          backgroundColor: isDark ? "rgba(20,35,20,0.98)" : "rgba(252,251,248,0.98)",
+          backdropFilter: "blur(12px)",
+          borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.07)"}`,
+          padding: `${theme.spacing(3)} ${theme.spacing(4)}`,
+          display: "flex",
+          flexDirection: "column",
+          gap: "2px",
+          zIndex: 40,
+          boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+        }}
+      >
+        {["Home", "About", "Blog", "Success Stories", "Contact"].map((label) => {
+          const href =
+            label === "Home"
+              ? "/"
+              : `/${label.toLowerCase().replace(/\s+/g, "-")}`;
+          return (
+            <Link
+              key={label}
+              href={href}
+              style={{
+                fontSize: "14px",
+                fontWeight: 500,
+                color: isDark ? "rgba(200,220,200,0.85)" : "#4A6741",
+                textDecoration: "none",
+                padding: "10px 14px",
+                borderRadius: "8px",
+                transition: "all 0.18s ease",
+              }}
+              onClick={() => setMobileMenuOpen(false)}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = isDark
+                  ? "rgba(255,255,255,0.06)"
+                  : "rgba(44,74,46,0.07)";
+                e.currentTarget.style.color = isDark ? "#fff" : "#2C4A2E";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "transparent";
+                e.currentTarget.style.color = isDark
+                  ? "rgba(200,220,200,0.85)"
+                  : "#4A6741";
+              }}
+            >
+              {label}
+            </Link>
+          );
+        })}
+  
+        {/* Mobile Sign In row */}
+        <div
+          style={{
+            marginTop: "8px",
+            paddingTop: "12px",
+            borderTop: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.07)"}`,
+            display: "flex",
+            gap: "8px",
+          }}
+        >
+          <Link
+            href="/login"
+            style={{
+              flex: 1,
+              textAlign: "center",
+              padding: "10px",
+              fontSize: "13.5px",
+              fontWeight: 500,
+              color: isDark ? "rgba(200,220,200,0.85)" : "#4A6741",
+              textDecoration: "none",
+              borderRadius: "8px",
+              border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(74,103,65,0.2)"}`,
+            }}
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Sign In
+          </Link>
+          <Link
+            href="/signup"
+            style={{
+              flex: 1,
+              textAlign: "center",
+              padding: "10px",
+              fontSize: "13.5px",
+              fontWeight: 600,
+              color: "#fff",
+              textDecoration: "none",
+              borderRadius: "8px",
+              background: "linear-gradient(135deg, #2C4A2E 0%, #3d6640 100%)",
+              boxShadow: "0 2px 8px rgba(44,74,46,0.3)",
+            }}
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Get Started
+          </Link>
+        </div>
+      </div>
+    )}
+  </nav>
       {/* ===== HERO SECTION ===== */}
       <header
         style={{
@@ -826,10 +746,9 @@ const LandingPage: React.FC = () => {
             inset: 0,
             zIndex: 0,
             opacity: 0.3,
-            background:
-              "radial-gradient(circle at top right, #bfdbfe, #f9fafb, white)",
+            background: heroGradient,
           }}
-        ></div>
+        />
         <div
           style={{
             maxWidth: "1280px",
@@ -846,10 +765,10 @@ const LandingPage: React.FC = () => {
               alignItems: "center",
               gap: theme.spacing(2),
               padding: `${theme.spacing(1)} ${theme.spacing(3)}`,
-              backgroundColor: theme.colors.brand[50],
-              border: `1px solid ${theme.colors.brand[100]}`,
+              backgroundColor: isDark ? theme.colors.brand[800] : theme.colors.brand[50],
+              border: `1px solid ${isDark ? theme.colors.brand[700] : theme.colors.brand[100]}`,
               borderRadius: theme.borderRadius.full,
-              color: theme.colors.brand[700],
+              color: isDark ? theme.colors.brand[200] : theme.colors.brand[700],
               fontSize: theme.fontSize.xs,
               fontWeight: 600,
               textTransform: "uppercase",
@@ -866,7 +785,7 @@ const LandingPage: React.FC = () => {
               fontSize: isMdUp ? theme.fontSize["6xl"] : theme.fontSize["4xl"],
               fontFamily: theme.fontFamily.serif,
               fontWeight: "bold",
-              color: theme.colors.brand[900],
+              color: isDark ? theme.colors.white : theme.colors.brand[900],
               marginBottom: theme.spacing(5),
               lineHeight: 1.25,
               letterSpacing: "-0.025em",
@@ -877,7 +796,7 @@ const LandingPage: React.FC = () => {
               style={{
                 color: "transparent",
                 backgroundClip: "text",
-                backgroundImage: `linear-gradient(to right, ${theme.colors.brand[600]}, ${theme.colors.brand[400]})`,
+                backgroundImage: `linear-gradient(to right, ${theme.colors.brand[400]}, ${theme.colors.brand[600]})`,
                 fontStyle: "italic",
               }}
             >
@@ -887,7 +806,7 @@ const LandingPage: React.FC = () => {
           <p
             style={{
               fontSize: isMdUp ? theme.fontSize.xl : theme.fontSize.lg,
-              color: theme.colors.gray[600],
+              color: textSecondary,
               maxWidth: "42rem",
               margin: "0 auto",
               marginBottom: theme.spacing(8),
@@ -913,7 +832,7 @@ const LandingPage: React.FC = () => {
                 href="/dashboard"
                 style={{
                   padding: `${theme.spacing(3)} ${theme.spacing(6)}`,
-                  backgroundColor: theme.colors.brand[900],
+                  backgroundColor: theme.colors.brand[500],
                   color: theme.colors.white,
                   fontSize: theme.fontSize.base,
                   fontWeight: 500,
@@ -928,12 +847,12 @@ const LandingPage: React.FC = () => {
                   justifyContent: "center",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = theme.colors.brand[800];
+                  e.currentTarget.style.backgroundColor = theme.colors.brand[600];
                   e.currentTarget.style.boxShadow = theme.boxShadow["2xl"];
                   e.currentTarget.style.transform = "translateY(-4px)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = theme.colors.brand[900];
+                  e.currentTarget.style.backgroundColor = theme.colors.brand[500];
                   e.currentTarget.style.boxShadow = theme.boxShadow.xl;
                   e.currentTarget.style.transform = "translateY(0)";
                 }}
@@ -955,7 +874,7 @@ const LandingPage: React.FC = () => {
                 href="/signup"
                 style={{
                   padding: `${theme.spacing(3)} ${theme.spacing(6)}`,
-                  backgroundColor: theme.colors.brand[900],
+                  backgroundColor: theme.colors.brand[500],
                   color: theme.colors.white,
                   fontSize: theme.fontSize.base,
                   fontWeight: 500,
@@ -970,12 +889,12 @@ const LandingPage: React.FC = () => {
                   justifyContent: "center",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = theme.colors.brand[800];
+                  e.currentTarget.style.backgroundColor = theme.colors.brand[600];
                   e.currentTarget.style.boxShadow = theme.boxShadow["2xl"];
                   e.currentTarget.style.transform = "translateY(-4px)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = theme.colors.brand[900];
+                  e.currentTarget.style.backgroundColor = theme.colors.brand[500];
                   e.currentTarget.style.boxShadow = theme.boxShadow.xl;
                   e.currentTarget.style.transform = "translateY(0)";
                 }}
@@ -1000,7 +919,7 @@ const LandingPage: React.FC = () => {
       {/* Who Is Enduring Roots For - Responsive Grid */}
       <section
         style={{
-          background: "#141d4a",
+          background: whoBg,
           padding: isMdUp ? "6rem 2rem" : "4rem 1.5rem",
         }}
       >
@@ -1010,7 +929,7 @@ const LandingPage: React.FC = () => {
               fontSize: theme.fontSize.xs,
               fontWeight: 600,
               letterSpacing: "0.12em",
-              color: "rgba(255,255,255,0.5)",
+              color: isDark ? theme.colors.brand[300] : "rgba(255,255,255,0.5)",
               textTransform: "uppercase",
               marginBottom: "0.75rem",
               textAlign: "center",
@@ -1081,7 +1000,7 @@ const LandingPage: React.FC = () => {
                 style={{
                   background: "rgba(255,255,255,0.06)",
                   border: "1px solid rgba(255,255,255,0.1)",
-                  borderRadius: "14px",
+                  borderRadius: theme.borderRadius["2xl"],
                   padding: theme.spacing(6),
                 }}
               >
@@ -1108,7 +1027,7 @@ const LandingPage: React.FC = () => {
         id="testimonials"
         style={{
           padding: isMdUp ? `${theme.spacing(20)} 0` : `${theme.spacing(12)} 0`,
-          backgroundColor: theme.colors.gray[50],
+          backgroundColor: testimonialBg,
           overflow: "hidden",
           position: "relative",
         }}
@@ -1135,7 +1054,7 @@ const LandingPage: React.FC = () => {
                 fontSize: isMdUp ? theme.fontSize["5xl"] : theme.fontSize["3xl"],
                 fontFamily: theme.fontFamily.serif,
                 fontWeight: "bold",
-                color: theme.colors.brand[900],
+                color: textPrimary,
                 marginBottom: theme.spacing(4),
                 letterSpacing: "-0.025em",
               }}
@@ -1144,7 +1063,7 @@ const LandingPage: React.FC = () => {
             </h2>
             <p
               style={{
-                color: theme.colors.gray[600],
+                color: textSecondary,
                 maxWidth: "42rem",
                 margin: "0 auto",
                 fontSize: isMdUp ? theme.fontSize.lg : theme.fontSize.base,
@@ -1157,7 +1076,7 @@ const LandingPage: React.FC = () => {
           </div>
 
           <div className="relative group" style={{ position: "relative" }}>
-            {/* Carousel Controls - always visible on mobile, hover on desktop */}
+            {/* Carousel Controls */}
             <button
               onClick={prevSlide}
               style={{
@@ -1241,11 +1160,11 @@ const LandingPage: React.FC = () => {
                   <div key={idx} className="testimonial-carousel-slide">
                     <div
                       style={{
-                        backgroundColor: theme.colors.white,
+                        backgroundColor: testimonialCardBg,
                         padding: theme.spacing(6),
-                        borderRadius: "1.5rem",
+                        borderRadius: theme.borderRadius["3xl"],
                         boxShadow: theme.boxShadow.sm,
-                        border: `1px solid ${theme.colors.gray[100]}`,
+                        border: `1px solid ${testimonialCardBorder}`,
                         transition: "all 0.3s",
                         display: "flex",
                         flexDirection: "column",
@@ -1257,10 +1176,9 @@ const LandingPage: React.FC = () => {
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.boxShadow = theme.boxShadow.sm;
-                        e.currentTarget.style.borderColor = theme.colors.gray[100];
+                        e.currentTarget.style.borderColor = testimonialCardBorder;
                       }}
                     >
-                      {/* Avatar replaced with User icon */}
                       <div
                         style={{
                           display: "flex",
@@ -1275,7 +1193,7 @@ const LandingPage: React.FC = () => {
                             height: theme.spacing(12),
                             borderRadius: theme.borderRadius.full,
                             overflow: "hidden",
-                            border: `2px solid ${theme.colors.brand[100]}`,
+                            border: `2px solid ${theme.colors.brand[200]}`,
                             transition: "border-color 0.2s",
                             boxShadow: theme.boxShadow.md,
                             backgroundColor: theme.colors.brand[50],
@@ -1285,16 +1203,25 @@ const LandingPage: React.FC = () => {
                             (e.currentTarget.style.borderColor = theme.colors.brand[500])
                           }
                           onMouseLeave={(e) =>
-                            (e.currentTarget.style.borderColor = theme.colors.brand[100])
+                            (e.currentTarget.style.borderColor = theme.colors.brand[200])
                           }
                         >
-                          <User size={28} color={theme.colors.brand[600]} />
+                          <img
+                            src={t.avatar}
+                            alt={t.name}
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.display = "none";
+                              (e.target as HTMLImageElement).parentElement!.innerHTML =
+                                '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+                            }}
+                          />
                         </div>
                         <div style={{ textAlign: "left" }}>
                           <h4
                             style={{
                               fontWeight: "bold",
-                              color: theme.colors.gray[900],
+                              color: textPrimary,
                               fontSize: theme.fontSize.base,
                               lineHeight: 1.25,
                             }}
@@ -1323,7 +1250,7 @@ const LandingPage: React.FC = () => {
                       >
                         <Quote
                           style={{
-                            color: theme.colors.brand[100],
+                            color: isDark ? theme.colors.brand[800] : theme.colors.brand[100],
                             position: "absolute",
                             top: -12,
                             left: -12,
@@ -1332,7 +1259,7 @@ const LandingPage: React.FC = () => {
                         />
                         <p
                           style={{
-                            color: theme.colors.gray[700],
+                            color: textSecondary,
                             position: "relative",
                             zIndex: 10,
                             fontStyle: "italic",
@@ -1380,7 +1307,7 @@ const LandingPage: React.FC = () => {
                     height: theme.spacing(2),
                     borderRadius: theme.borderRadius.full,
                     backgroundColor:
-                      activeIndex === i ? theme.colors.brand[600] : theme.colors.brand[200],
+                      activeIndex === i ? theme.colors.brand[600] : theme.colors.brand[300],
                     transition: "all 0.3s",
                     border: "none",
                     cursor: "pointer",
@@ -1398,7 +1325,7 @@ const LandingPage: React.FC = () => {
                 alignItems: "center",
                 gap: theme.spacing(4),
                 padding: `${theme.spacing(3)} ${theme.spacing(6)}`,
-                backgroundColor: theme.colors.brand[900],
+                backgroundColor: theme.colors.brand[500],
                 borderRadius: theme.borderRadius.full,
                 color: theme.colors.white,
                 boxShadow: theme.boxShadow["2xl"],
@@ -1406,28 +1333,28 @@ const LandingPage: React.FC = () => {
                 justifyContent: "center",
               }}
             >
-             <div style={{ display: "flex", marginRight: `-${theme.spacing(2)}` }}>
-  {TESTIMONIALS.slice(0, 4).map((t, i) => (
-    <img
-      key={i}
-      src={t.avatar}
-      style={{
-        width: theme.spacing(8),
-        height: theme.spacing(8),
-        borderRadius: theme.borderRadius.full,
-        border: `2px solid ${theme.colors.brand[900]}`,
-        marginRight: `-${theme.spacing(2)}`,   // fixed
-      }}
-      alt=""
-    />
-  ))}
+              <div style={{ display: "flex", marginRight: `-${theme.spacing(2)}` }}>
+                {TESTIMONIALS.slice(0, 4).map((t, i) => (
+                  <img
+                    key={i}
+                    src={t.avatar}
+                    style={{
+                      width: theme.spacing(8),
+                      height: theme.spacing(8),
+                      borderRadius: theme.borderRadius.full,
+                      border: `2px solid ${theme.colors.brand[500]}`,
+                      marginRight: `-${theme.spacing(2)}`,
+                    }}
+                    alt=""
+                  />
+                ))}
                 <div
                   style={{
                     width: theme.spacing(8),
                     height: theme.spacing(8),
                     borderRadius: theme.borderRadius.full,
                     backgroundColor: theme.colors.brand[700],
-                    border: `2px solid ${theme.colors.brand[900]}`,
+                    border: `2px solid ${theme.colors.brand[500]}`,
                     ...flexCenter,
                     fontSize: theme.fontSize.xs,
                     fontWeight: "bold",
@@ -1442,7 +1369,7 @@ const LandingPage: React.FC = () => {
                   width: "1px",
                   backgroundColor: "rgba(255,255,255,0.2)",
                 }}
-              ></div>
+              />
               <p
                 style={{
                   fontSize: theme.fontSize.sm,
@@ -1470,8 +1397,8 @@ const LandingPage: React.FC = () => {
           <div
             style={{
               position: "relative",
-              borderRadius: "2rem",
-              backgroundColor: theme.colors.brand[900],
+              borderRadius: theme.borderRadius["3xl"],
+              backgroundColor: theme.colors.brand[800],
               color: theme.colors.white,
               overflow: "hidden",
               boxShadow: theme.boxShadow["2xl"],
@@ -1486,13 +1413,13 @@ const LandingPage: React.FC = () => {
                 right: 0,
                 width: theme.spacing(64),
                 height: theme.spacing(64),
-                backgroundColor: "rgba(37,99,235,0.3)",
+                backgroundColor: "rgba(85,130,94,0.3)",
                 filter: "blur(128px)",
                 marginRight: theme.spacing(-32),
                 marginTop: theme.spacing(-32),
                 borderRadius: theme.borderRadius.full,
               }}
-            ></div>
+            />
             <div
               style={{
                 position: "absolute",
@@ -1500,13 +1427,13 @@ const LandingPage: React.FC = () => {
                 left: 0,
                 width: theme.spacing(48),
                 height: theme.spacing(48),
-                backgroundColor: "rgba(251,191,36,0.1)",
+                backgroundColor: "rgba(245,158,11,0.1)",
                 filter: "blur(128px)",
                 marginLeft: theme.spacing(-24),
                 marginBottom: theme.spacing(-24),
                 borderRadius: theme.borderRadius.full,
               }}
-            ></div>
+            />
 
             <div className="grid-responsive-2cols">
               <div style={{ textAlign: "left" }}>
@@ -1683,7 +1610,7 @@ const LandingPage: React.FC = () => {
                             width: "75%",
                             backgroundColor: theme.colors.amber[400],
                           }}
-                        ></div>
+                        />
                       </div>
                       <p
                         style={{
@@ -1741,7 +1668,7 @@ const LandingPage: React.FC = () => {
       <section
         id="how-it-works"
         style={{
-          background: "#f7f9ff",
+          background: howBg,
           padding: isMdUp ? "6rem 2rem" : "4rem 1.5rem",
         }}
       >
@@ -1751,7 +1678,7 @@ const LandingPage: React.FC = () => {
               fontSize: theme.fontSize.xs,
               fontWeight: 600,
               letterSpacing: "0.12em",
-              color: "#4a6fd4",
+              color: theme.colors.brand[600],
               textTransform: "uppercase",
               marginBottom: "0.75rem",
               textAlign: "center",
@@ -1764,7 +1691,7 @@ const LandingPage: React.FC = () => {
               fontFamily: theme.fontFamily.serif,
               fontSize: isMdUp ? theme.fontSize["5xl"] : theme.fontSize["3xl"],
               fontWeight: 800,
-              color: "#1e2d6b",
+              color: textPrimary,
               textAlign: "center",
               marginBottom: "1rem",
             }}
@@ -1775,7 +1702,7 @@ const LandingPage: React.FC = () => {
             style={{
               textAlign: "center",
               fontSize: isMdUp ? theme.fontSize.lg : theme.fontSize.base,
-              color: "#5a6a7e",
+              color: textSecondary,
               marginBottom: "3rem",
             }}
           >
@@ -1827,7 +1754,7 @@ const LandingPage: React.FC = () => {
                     width: isMdUp ? 56 : 48,
                     height: isMdUp ? 56 : 48,
                     borderRadius: "50%",
-                    background: "#1e2d6b",
+                    background: stepCircleBg,
                     color: "#fff",
                     display: "flex",
                     alignItems: "center",
@@ -1838,8 +1765,8 @@ const LandingPage: React.FC = () => {
                     marginBottom: "1.25rem",
                     position: "relative",
                     zIndex: 1,
-                    border: "4px solid #fff",
-                    boxShadow: "0 0 0 2px #4a6fd4",
+                    border: `4px solid ${palette.bgCard}`,
+                    boxShadow: `0 0 0 2px ${theme.colors.brand[600]}`,
                   }}
                 >
                   {s.num}
@@ -1848,7 +1775,7 @@ const LandingPage: React.FC = () => {
                   style={{
                     fontSize: isMdUp ? 16 : 15,
                     fontWeight: 600,
-                    color: "#1e2d6b",
+                    color: textPrimary,
                     marginBottom: "0.5rem",
                   }}
                 >
@@ -1857,7 +1784,7 @@ const LandingPage: React.FC = () => {
                 <p
                   style={{
                     fontSize: isMdUp ? 13 : 12,
-                    color: "#5a6a7e",
+                    color: textSecondary,
                     lineHeight: 1.7,
                   }}
                 >
@@ -1869,8 +1796,8 @@ const LandingPage: React.FC = () => {
 
           <div
             style={{
-              background: "linear-gradient(135deg, #1e2d6b 0%, #2a3d8f 100%)",
-              borderRadius: "20px",
+              background: `linear-gradient(135deg, ${theme.colors.brand[800]} 0%, ${theme.colors.brand[700]} 100%)`,
+              borderRadius: theme.borderRadius["2xl"],
               padding: isMdUp ? "3rem" : "2rem",
               textAlign: "center",
               margin: "3rem 0 0",
@@ -1912,28 +1839,36 @@ const LandingPage: React.FC = () => {
               Upload your first memory today. It takes just a few minutes to get
               started.
             </p>
-            <a
-              href="https://enduringroots.in/signup"
+            <Link
+              href="/signup"
               style={{
-                background: "#f5a623",
-                color: "#1a0a00",
+                background: theme.colors.amber[400],
+                color: theme.colors.brand[900],
                 padding: isMdUp ? "13px 32px" : "11px 24px",
-                borderRadius: "10px",
+                borderRadius: theme.borderRadius.xl,
                 border: "none",
                 fontSize: isMdUp ? 15 : 14,
                 fontWeight: 600,
                 textDecoration: "none",
                 display: "inline-block",
+                transition: theme.transition.fast,
               }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.backgroundColor = theme.colors.amber[500])
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.backgroundColor = theme.colors.amber[400])
+              }
             >
               Upload Your First Memory →
-            </a>
+            </Link>
           </div>
         </div>
       </section>
 
       <Footer />
     </div>
+    </>
   );
 };
 
