@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Heart } from "lucide-react";
+import { Heart, MessageCircle } from "lucide-react";
+import { FaInstagram } from "react-icons/fa";
 import { APP_NAME } from "../../constants";
 import { useAuth } from "../../context/AuthContext";
 import theme from "../theme"; // <-- Imported external theme (green brand)
@@ -54,6 +55,11 @@ const Footer: React.FC = () => {
     return "1fr";
   };
 
+  // WhatsApp link using the number from contact
+  const whatsappLink = "https://wa.me/919818394549";
+  const instagramLink =
+    "https://www.instagram.com/enduring.roots?igsh=dDNicnFtN2tkdmIw";
+
   return (
     <footer
       style={{
@@ -86,7 +92,7 @@ const Footer: React.FC = () => {
             marginBottom: theme.spacing(16),
           }}
         >
-          {/* ----- Brand Column (Social icons removed as requested) ----- */}
+          {/* ----- Brand Column (with social icons) ----- */}
           <div
             style={{
               display: "flex",
@@ -118,6 +124,58 @@ const Footer: React.FC = () => {
               Preserving the stories that matter most. A secure, beautiful digital
               sanctuary for your life's journey and family legacy.
             </p>
+
+            {/* Social Icons - Instagram & WhatsApp */}
+            <div
+              style={{
+                display: "flex",
+                gap: theme.spacing(4),
+                marginTop: theme.spacing(2),
+              }}
+            >
+              <a
+                href={instagramLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: theme.colors.brand[200],
+                  transition: theme.transition.DEFAULT,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: theme.spacing(1),
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.color = theme.colors.white)
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.color = theme.colors.brand[200])
+                }
+              >
+              <FaInstagram size={20} />
+                <span style={{ fontSize: theme.fontSize.sm }}>Instagram</span>
+              </a>
+              <a
+                href={whatsappLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: theme.colors.brand[200],
+                  transition: theme.transition.DEFAULT,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: theme.spacing(1),
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.color = theme.colors.white)
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.color = theme.colors.brand[200])
+                }
+              >
+                <MessageCircle size={20} />
+                <span style={{ fontSize: theme.fontSize.sm }}>WhatsApp</span>
+              </a>
+            </div>
           </div>
 
           {/* ----- Quick Links (Product) ----- */}
@@ -226,7 +284,7 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* ----- Legal ----- */}
+          {/* ----- Legal (fixed duplicate Terms) ----- */}
           <div>
             <h3
               style={{
@@ -291,28 +349,9 @@ const Footer: React.FC = () => {
                   Terms of Service
                 </Link>
               </li>
-                <li>
-                <Link
-                  href="/terms"
-                  onClick={scrollToTop}
-                  style={{
-                    color: theme.colors.brand[200],
-                    textDecoration: "none",
-                    transition: theme.transition.DEFAULT,
-                  }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.color = theme.colors.white)
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.color = theme.colors.brand[200])
-                  }
-                >
-                  Terms of Service
-                </Link>
-              </li>
               <li>
                 <Link
-                  href="/help"
+                  href="/helps"
                   onClick={scrollToTop}
                   style={{
                     color: theme.colors.brand[200],

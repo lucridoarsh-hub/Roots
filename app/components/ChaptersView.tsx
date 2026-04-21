@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+// ChaptersView.tsx
+import React, { useState, useEffect, useRef } from 'react';
 import { Memory, LifeStage } from '../../types';
 import { LIFE_STAGE_CONFIG } from '../../constants';
 import MemoryCard from './MemoryCard';
@@ -12,10 +13,14 @@ import {
   MessageCircle,
   Calendar,
   Tag,
+  Download,
+  Trash2,
 } from 'lucide-react';
 import { useMemories } from '../../context/MemoryContext';
 import { useTheme } from '../../context/ThemeContext';
-import theme from '../theme'; // <-- Imported external theme (green brand)
+import theme from '../theme';
+import { formatDistanceToNow } from 'date-fns';
+import axios from 'axios';
 
 // ========== UTILITY: Convert stage to colors (using theme palette) ==========
 const getStageColors = (stage: string, isDark: boolean) => {
@@ -87,11 +92,20 @@ const useIsDark = () => {
 interface MemoryDetailModalProps {
   memory: Memory | null;
   onClose: () => void;
+  onDelete?: (id: string) => void;
   isDark: boolean;
 }
 
-const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, onClose, isDark }) => {
+const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, onClose, onDelete, isDark }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [imageLoading, setImageLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
+
+  // Reset loading and error state when image index or memory changes
+  useEffect(() => {
+    setImageLoading(true);
+    setImageError(false);
+  }, [currentImageIndex, memory]);
 
   if (!memory) return null;
 
@@ -120,6 +134,13 @@ const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, onClose, 
   const textPrimary = isDark ? theme.dark.text : theme.light.text;
   const textSecondary = isDark ? theme.dark.textMuted : theme.light.textMuted;
   const borderColor = isDark ? theme.dark.border : theme.light.border;
+
+  const handleDelete = () => {
+    if (window.confirm('Are you sure you want to delete this memory?')) {
+      onDelete?.(memory.id);
+      onClose();
+    }
+  };
 
   return (
     <div
@@ -153,31 +174,53 @@ const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, onClose, 
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <button
-          onClick={onClose}
-          style={{
-            position: 'absolute',
-            top: theme.spacing(4),
-            right: theme.spacing(4),
-            background: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
-            border: 'none',
-            borderRadius: theme.borderRadius.full,
-            width: '40px',
-            height: '40px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            color: textPrimary,
-            zIndex: 10,
-            backdropFilter: 'blur(4px)',
-            transition: theme.transition.DEFAULT,
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)')}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)')}
-        >
-          <X size={20} />
-        </button>
+        {/* Close & Delete buttons */}
+        <div style={{ position: 'absolute', top: theme.spacing(4), right: theme.spacing(4), display: 'flex', gap: theme.spacing(2), zIndex: 10 }}>
+          {onDelete && (
+            <button
+              onClick={handleDelete}
+              style={{
+                background: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+                border: 'none',
+                borderRadius: theme.borderRadius.full,
+                width: '40px',
+                height: '40px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                color: theme.colors.rose[500],
+                backdropFilter: 'blur(4px)',
+                transition: theme.transition.DEFAULT,
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)')}
+            >
+              <Trash2 size={20} />
+            </button>
+          )}
+          <button
+            onClick={onClose}
+            style={{
+              background: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+              border: 'none',
+              borderRadius: theme.borderRadius.full,
+              width: '40px',
+              height: '40px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              color: textPrimary,
+              backdropFilter: 'blur(4px)',
+              transition: theme.transition.DEFAULT,
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)')}
+          >
+            <X size={20} />
+          </button>
+        </div>
 
         {images.length > 0 && (
           <>
@@ -193,16 +236,58 @@ const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, onClose, 
                 borderTopRightRadius: theme.borderRadius['2xl'],
               }}
             >
-              <img
-                src={images[currentImageIndex]?.url || ''}
-                alt={memory.title}
-                style={{
-                  maxWidth: '100%',
-                  maxHeight: '500px',
-                  objectFit: 'contain',
-                  borderRadius: theme.borderRadius['2xl'],
-                }}
-              />
+              {/* Loading spinner overlay */}
+              {imageLoading && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: isDark ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.5)',
+                    backdropFilter: 'blur(2px)',
+                    zIndex: 5,
+                  }}
+                >
+                  <Loader2 size={48} className="animate-spin" style={{ color: theme.colors.brand[500] }} />
+                </div>
+              )}
+
+              {/* Image */}
+              {!imageError ? (
+                <img
+                  src={images[currentImageIndex]?.url || ''}
+                  alt={memory.title}
+                  onLoad={() => setImageLoading(false)}
+                  onError={() => {
+                    setImageLoading(false);
+                    setImageError(true);
+                  }}
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '500px',
+                    objectFit: 'contain',
+                    borderRadius: theme.borderRadius['2xl'],
+                    opacity: imageLoading ? 0 : 1,
+                    transition: 'opacity 0.3s ease',
+                  }}
+                />
+              ) : (
+                <div
+                  style={{
+                    padding: theme.spacing(8),
+                    color: textSecondary,
+                    textAlign: 'center',
+                  }}
+                >
+                  <p>Unable to load image</p>
+                </div>
+              )}
+
               {hasMultipleImages && (
                 <>
                   <button
@@ -224,6 +309,7 @@ const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, onClose, 
                       color: textPrimary,
                       backdropFilter: 'blur(4px)',
                       transition: theme.transition.DEFAULT,
+                      zIndex: 6,
                     }}
                     onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = isDark ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.9)')}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = isDark ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.8)')}
@@ -249,6 +335,7 @@ const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, onClose, 
                       color: textPrimary,
                       backdropFilter: 'blur(4px)',
                       transition: theme.transition.DEFAULT,
+                      zIndex: 6,
                     }}
                     onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = isDark ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.9)')}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = isDark ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.8)')}
@@ -267,6 +354,7 @@ const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, onClose, 
                       fontSize: theme.fontSize.sm,
                       color: textPrimary,
                       backdropFilter: 'blur(4px)',
+                      zIndex: 6,
                     }}
                   >
                     {currentImageIndex + 1} / {images.length}
@@ -386,6 +474,104 @@ const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, onClose, 
               </span>
             </div>
           </div>
+
+          {/* Comments Section */}
+          {memory.comments && memory.comments.length > 0 && (
+            <div style={{ marginTop: theme.spacing(6) }}>
+              <h3
+                style={{
+                  fontSize: theme.fontSize.lg,
+                  fontWeight: 600,
+                  color: textPrimary,
+                  marginBottom: theme.spacing(4),
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: theme.spacing(2),
+                }}
+              >
+                <MessageCircle size={20} color={textSecondary} />
+                Comments ({memory.comments.length})
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: theme.spacing(4) }}>
+                {memory.comments.map((comment: any) => {
+                  const commentDate = comment.createdAt
+                    ? new Date(comment.createdAt)
+                    : new Date();
+                  const timeAgo = formatDistanceToNow(commentDate, { addSuffix: true });
+                  return (
+                    <div
+                      key={comment.id}
+                      style={{
+                        display: 'flex',
+                        gap: theme.spacing(3),
+                        paddingBottom: theme.spacing(4),
+                        borderBottom: `1px solid ${borderColor}`,
+                      }}
+                    >
+                      {/* Avatar */}
+                      <div
+                        style={{
+                          width: '40px',
+                          height: '40px',
+                          borderRadius: theme.borderRadius.full,
+                          backgroundColor: isDark ? theme.colors.stone[700] : theme.colors.stone[200],
+                          backgroundImage: comment.userAvatar ? `url(${comment.userAvatar})` : 'none',
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: textSecondary,
+                          fontSize: theme.fontSize.sm,
+                          fontWeight: 600,
+                          flexShrink: 0,
+                        }}
+                      >
+                        {!comment.userAvatar && comment.userName?.charAt(0).toUpperCase()}
+                      </div>
+                      {/* Comment content */}
+                      <div style={{ flex: 1 }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: theme.spacing(2),
+                            marginBottom: theme.spacing(1),
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontWeight: 600,
+                              color: textPrimary,
+                            }}
+                          >
+                            {comment.userName}
+                          </span>
+                          <span
+                            style={{
+                              fontSize: theme.fontSize.xs,
+                              color: textSecondary,
+                            }}
+                          >
+                            {timeAgo}
+                          </span>
+                        </div>
+                        <p
+                          style={{
+                            color: textSecondary,
+                            lineHeight: 1.5,
+                            wordBreak: 'break-word',
+                          }}
+                        >
+                          {comment.text}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -394,7 +580,7 @@ const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ memory, onClose, 
 
 // ========== MAIN COMPONENT ==========
 interface ChaptersViewProps {
-  memories: Memory[]; // 👈 add this
+  memories: Memory[];
   onEdit: (memory: Memory) => void;
   onDelete: (id: string) => void;
   onPlayVideo?: (url: string, title: string) => void;
@@ -407,6 +593,13 @@ export const ChaptersView: React.FC<ChaptersViewProps> = ({ onEdit, onDelete, on
 
   const { memories, isLoading, error } = useMemories();
   const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
+  
+  // Export state
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportProgress, setExportProgress] = useState(0);
+  const [exportStatus, setExportStatus] = useState<'idle' | 'generating' | 'downloading' | 'complete'>('idle');
+  
+  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const orderedStages = [
     LifeStage.EARLY_YEARS,
@@ -430,6 +623,103 @@ export const ChaptersView: React.FC<ChaptersViewProps> = ({ onEdit, onDelete, on
 
   const closeModal = () => {
     setSelectedMemory(null);
+  };
+
+  // Cleanup interval on unmount
+  useEffect(() => {
+    return () => {
+      if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
+    };
+  }, []);
+
+  const handleExport = async () => {
+    if (isExporting) return;
+    
+    setIsExporting(true);
+    setExportProgress(0);
+    setExportStatus('generating');
+    
+    // Simulate progress while waiting for server response
+    progressIntervalRef.current = setInterval(() => {
+      setExportProgress(prev => {
+        // Slowly increase up to 90% (server generation phase)
+        const increment = prev < 30 ? 2 : prev < 60 ? 1.5 : prev < 80 ? 0.8 : 0.4;
+        const next = Math.min(prev + increment, 90);
+        return next;
+      });
+    }, 200);
+
+    try {
+      const response = await axios.get(`/api/auth/pdf?download=true`, {
+        withCredentials: true,
+        responseType: 'blob',
+        onDownloadProgress: (progressEvent) => {
+          // Once we start receiving data, we're in downloading phase
+          if (progressEvent.total) {
+            setExportStatus('downloading');
+            // Map download progress from 90% to 100%
+            const percentCompleted = Math.round((progressEvent.loaded * 10) / progressEvent.total);
+            setExportProgress(90 + percentCompleted);
+          }
+        },
+      });
+
+      // Clear the interval
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+        progressIntervalRef.current = null;
+      }
+
+      // Create blob and trigger download
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `memory-album-${Date.now()}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+
+      // Show completion
+      setExportProgress(100);
+      setExportStatus('complete');
+      
+      // Reset after a short delay
+      setTimeout(() => {
+        setIsExporting(false);
+        setExportProgress(0);
+        setExportStatus('idle');
+      }, 1500);
+      
+    } catch (err: any) {
+      console.error('PDF export error:', err);
+      
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+        progressIntervalRef.current = null;
+      }
+      
+      let message = 'Failed to export PDF';
+      if (err.response?.data instanceof Blob) {
+        const text = await err.response.data.text();
+        try {
+          const json = JSON.parse(text);
+          message = json.message || message;
+        } catch {
+          message = text || message;
+        }
+      } else if (err.response?.data?.message) {
+        message = err.response.data.message;
+      }
+      
+      // Could show a toast notification here
+      alert(message);
+      
+      setIsExporting(false);
+      setExportProgress(0);
+      setExportStatus('idle');
+    }
   };
 
   // Theme-based colors
@@ -477,7 +767,7 @@ export const ChaptersView: React.FC<ChaptersViewProps> = ({ onEdit, onDelete, on
         margin: '0 auto',
       }}
     >
-      {/* Header */}
+      {/* Header with Export Button */}
       <div style={{ textAlign: 'center', marginBottom: theme.spacing(10) }}>
         <div
           style={{
@@ -515,6 +805,83 @@ export const ChaptersView: React.FC<ChaptersViewProps> = ({ onEdit, onDelete, on
         >
           Your life, remembered one chapter at a time
         </p>
+
+        {/* Export Section */}
+        <div style={{ marginTop: theme.spacing(6) }}>
+          <button
+            onClick={handleExport}
+            disabled={isExporting}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: theme.spacing(2),
+              padding: `${theme.spacing(2)} ${theme.spacing(6)}`,
+              backgroundColor: isDark ? theme.colors.brand[600] : theme.colors.brand[500],
+              color: 'white',
+              border: 'none',
+              borderRadius: theme.borderRadius.full,
+              fontWeight: 500,
+              cursor: isExporting ? 'not-allowed' : 'pointer',
+              opacity: isExporting ? 0.7 : 1,
+              transition: theme.transition.DEFAULT,
+            }}
+            onMouseEnter={(e) => {
+              if (!isExporting) e.currentTarget.style.backgroundColor = isDark ? theme.colors.brand[500] : theme.colors.brand[600];
+            }}
+            onMouseLeave={(e) => {
+              if (!isExporting) e.currentTarget.style.backgroundColor = isDark ? theme.colors.brand[600] : theme.colors.brand[500];
+            }}
+          >
+            {isExporting ? (
+              <>
+                <Loader2 size={18} className="animate-spin" />
+                {exportStatus === 'generating' && 'Generating PDF...'}
+                {exportStatus === 'downloading' && 'Downloading...'}
+                {exportStatus === 'complete' && 'Done!'}
+              </>
+            ) : (
+              <>
+                <Download size={18} />
+                Export as PDF
+              </>
+            )}
+          </button>
+
+          {/* Progress Bar */}
+          {isExporting && (
+            <div style={{ marginTop: theme.spacing(4), maxWidth: '300px', marginLeft: 'auto', marginRight: 'auto' }}>
+              <div
+                style={{
+                  height: '6px',
+                  backgroundColor: isDark ? theme.colors.stone[700] : theme.colors.stone[200],
+                  borderRadius: theme.borderRadius.full,
+                  overflow: 'hidden',
+                }}
+              >
+                <div
+                  style={{
+                    height: '100%',
+                    width: `${exportProgress}%`,
+                    backgroundColor: theme.colors.brand[500],
+                    transition: 'width 0.2s ease-out',
+                  }}
+                />
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  marginTop: theme.spacing(1),
+                  fontSize: theme.fontSize.xs,
+                  color: textSecondary,
+                }}
+              >
+                <span>{Math.round(exportProgress)}%</span>
+                {exportStatus === 'complete' && <span>✓ Complete</span>}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {orderedStages.map((stage) => {
@@ -641,7 +1008,12 @@ export const ChaptersView: React.FC<ChaptersViewProps> = ({ onEdit, onDelete, on
 
       {/* Memory Detail Modal */}
       {selectedMemory && (
-        <MemoryDetailModal memory={selectedMemory} onClose={closeModal} isDark={isDark} />
+        <MemoryDetailModal
+          memory={selectedMemory}
+          onClose={closeModal}
+          onDelete={onDelete}
+          isDark={isDark}
+        />
       )}
     </div>
   );

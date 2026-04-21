@@ -715,7 +715,7 @@ const Dashboard: React.FC = () => {
                     <MemoryCard
                       memory={memory}
                       onEdit={() => {}}
-                      onDelete={() => {}}
+                      onDelete={deleteMemory}
                       onPlayVideo={handlePlayVideo}
                     />
                     <div

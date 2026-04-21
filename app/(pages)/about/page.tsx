@@ -377,345 +377,344 @@ export default function About() {
       )}
 
       {/* Header */}
-      <header
+    <nav
+    style={{
+      position: "relative",
+      width: "100%",
+      zIndex: 50,
+      backgroundColor: isDark
+        ? "rgba(20, 35, 20, 0.95)"
+        : "rgba(252, 251, 248, 0.97)",
+      backdropFilter: "blur(12px)",
+      WebkitBackdropFilter: "blur(12px)",
+      borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.07)"}`,
+      boxShadow: isDark
+        ? "0 1px 24px rgba(0,0,0,0.4)"
+        : "0 1px 20px rgba(44, 74, 46, 0.08)",
+      transition: "all 0.3s ease",
+      top: dynamicSettings.announcement ? theme.spacing(8) : 0,
+    }}
+  >
+    <div
+      style={{
+        maxWidth: "1280px",
+        margin: "0 auto",
+        padding: `0 ${theme.spacing(8)}`,
+        height: "100px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+      }}
+    >
+      {/* Logo */}
+      <Link
+        href="/"
         style={{
-          position: "fixed",
-          top: dynamicSettings.announcement ? 40 : 0,
-          left: 0,
-          right: 0,
-          zIndex: 99,
-          transition: "all 0.3s cubic-bezier(0.2, 0, 0, 1)",
-          backgroundColor: scrolled
-            ? isDark
-              ? "rgba(13, 26, 16, 0.92)"
-              : "rgba(250, 250, 249, 0.92)"
-            : isDark
-            ? "rgba(13, 26, 16, 0.75)"
-            : "rgba(250, 250, 249, 0.75)",
-          backdropFilter: "blur(12px)",
-          borderBottom: `1px solid ${
-            scrolled
-              ? isDark
-                ? "rgba(47, 82, 55, 0.3)"
-                : "rgba(217, 237, 224, 0.3)"
-              : "transparent"
-          }`,
-          boxShadow: scrolled ? "0 4px 20px rgba(0, 0, 0, 0.05)" : "none",
+          display: "flex",
+          alignItems: "center",
+          textDecoration: "none",
+          flexShrink: 0,
         }}
       >
+        <img
+          src="/logo.png"
+          style={{
+            width: "100px",
+            height: "100px",
+            objectFit: "contain",
+            transition: "transform 0.2s ease",
+          }}
+          alt="Enduring Roots Logo"
+          onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+          onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+        />
+      </Link>
+  
+      {/* Desktop nav links */}
+      {isMdUp && (
         <div
           style={{
-            maxWidth: "1400px",
-            margin: "0 auto",
-            padding: `0 ${theme.spacing(6)}`,
-            height: "72px",
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
+            gap: "2px",
+            position: "absolute",
+            left: "50%",
+            transform: "translateX(-50%)",
           }}
         >
-          <Link
-            href="/"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: theme.spacing(2),
-              textDecoration: "none",
-              flexShrink: 0,
-            }}
-          >
-            <div
-              style={{
-                width: "44px",
-                height: "44px",
-                backgroundColor: theme.colors.brand[600],
-                borderRadius: theme.borderRadius.xl,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-              }}
-            >
-              <img
-                src="/logo.png"
-                style={{
-                  width: "36px",
-                  height: "36px",
-                  objectFit: "contain",
-                }}
-                alt="Enduring Roots"
-              />
-            </div>
-            <span
-              style={{
-                fontSize: "18px",
-                fontWeight: 600,
-                fontFamily: theme.fontFamily.serif,
-                color: isDark ? theme.colors.brand[100] : theme.colors.brand[800],
-                letterSpacing: "-0.01em",
-              }}
-            >
-              Enduring Roots
-            </span>
-          </Link>
-
-          {isMdUp && (
-            <nav
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: theme.spacing(8),
-              }}
-            >
-              {[
-                { name: "Home", path: "/" },
-                { name: "About", path: "/about" },
-                { name: "Blog", path: "/blog" },
-                { name: "Success Stories", path: "/success-stories" },
-                { name: "Contact", path: "/contact" },
-              ].map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.path}
-                  className={`nav-link ${isActive(item.path) ? "active" : ""}`}
-                  style={{
-                    color: isActive(item.path)
-                      ? brandColor
-                      : isDark
-                      ? theme.colors.stone[300]
-                      : theme.colors.stone[600],
-                  }}
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </nav>
-          )}
-
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: theme.spacing(3),
-              flexShrink: 0,
-            }}
-          >
-            {isAuthenticated ? (
+          {["Home", "About", "Blog", "Success Stories", "Contact"].map((label) => {
+            const href =
+              label === "Home"
+                ? "/"
+                : `/${label.toLowerCase().replace(/\s+/g, "-")}`;
+            return (
               <Link
-                href="/dashboard"
-                className="btn-hover-scale"
+                key={label}
+                href={href}
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: theme.spacing(1.5),
-                  padding: `${theme.spacing(2)} ${theme.spacing(5)}`,
-                  backgroundColor: theme.colors.brand[600],
-                  color: theme.colors.white,
-                  fontSize: "13px",
-                  fontWeight: 600,
-                  borderRadius: "999px",
+                  fontSize: "13.5px",
+                  fontWeight: 500,
+                  color: isDark ? "rgba(200,220,200,0.85)" : "#4A6741",
                   textDecoration: "none",
-                  transition: "all 0.2s ease",
-                  boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+                  padding: "6px 14px",
+                  borderRadius: "8px",
+                  transition: "all 0.18s ease",
+                  letterSpacing: "0.01em",
+                  position: "relative",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = theme.colors.brand[700];
-                  e.currentTarget.style.transform = "translateY(-1px)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = theme.colors.brand[600];
-                  e.currentTarget.style.transform = "translateY(0)";
-                }}
-              >
-                <LayoutDashboard size={16} />
-                Dashboard
-              </Link>
-            ) : (
-              <>
-                {isMdUp && (
-                  <Link
-                    href="/login"
-                    className="nav-link"
-                    style={{
-                      color: isDark ? theme.colors.stone[300] : theme.colors.stone[600],
-                      fontSize: "14px",
-                      fontWeight: 500,
-                    }}
-                  >
-                    Sign In
-                  </Link>
-                )}
-                <Link
-                  href="/signup"
-                  className="btn-hover-scale"
-                  style={{
-                    padding: `${theme.spacing(2)} ${theme.spacing(5)}`,
-                    backgroundColor: theme.colors.brand[600],
-                    color: theme.colors.white,
-                    fontSize: "13px",
-                    fontWeight: 600,
-                    borderRadius: "999px",
-                    textDecoration: "none",
-                    transition: "all 0.2s ease",
-                    boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = theme.colors.brand[700];
-                    e.currentTarget.style.transform = "translateY(-1px)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = theme.colors.brand[600];
-                    e.currentTarget.style.transform = "translateY(0)";
-                  }}
-                >
-                  {isMdUp ? "Get Started" : "Sign Up"}
-                </Link>
-              </>
-            )}
-
-            {!isMdUp && (
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                aria-label="Toggle menu"
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  padding: theme.spacing(2),
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: isDark ? theme.colors.brand[100] : theme.colors.brand[700],
-                  borderRadius: theme.borderRadius.lg,
-                  transition: "background-color 0.2s",
-                }}
-                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = isDark ? "#fff" : "#2C4A2E";
                   e.currentTarget.style.backgroundColor = isDark
-                    ? "rgba(255,255,255,0.1)"
-                    : "rgba(0,0,0,0.05)";
+                    ? "rgba(255,255,255,0.06)"
+                    : "rgba(44,74,46,0.07)";
                 }}
                 onMouseLeave={(e) => {
+                  e.currentTarget.style.color = isDark
+                    ? "rgba(200,220,200,0.85)"
+                    : "#4A6741";
                   e.currentTarget.style.backgroundColor = "transparent";
                 }}
               >
-                {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
-              </button>
-            )}
-          </div>
+                {label}
+              </Link>
+            );
+          })}
         </div>
-
-        {!isMdUp && mobileMenuOpen && (
-          <div
+      )}
+  
+      {/* Auth buttons */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: theme.spacing(2),
+          flexShrink: 0,
+        }}
+      >
+        {isAuthenticated ? (
+          <Link
+            href="/dashboard"
             style={{
-              position: "fixed",
-              top: dynamicSettings.announcement ? 112 : 72,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: isDark
-                ? "rgba(13, 26, 16, 0.95)"
-                : "rgba(250, 250, 249, 0.98)",
-              backdropFilter: "blur(16px)",
-              zIndex: 98,
-              animation: "slideDown 0.25s ease",
-              overflowY: "auto",
+              padding: "9px 20px",
+              backgroundColor: "#2C4A2E",
+              color: "#fff",
+              fontSize: "13.5px",
+              fontWeight: 600,
+              borderRadius: "10px",
+              textDecoration: "none",
+              display: "flex",
+              alignItems: "center",
+              gap: "7px",
+              transition: "all 0.2s ease",
+              boxShadow: "0 2px 8px rgba(44,74,46,0.3)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "#3a5e3c";
+              e.currentTarget.style.boxShadow = "0 4px 14px rgba(44,74,46,0.4)";
+              e.currentTarget.style.transform = "translateY(-1px)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "#2C4A2E";
+              e.currentTarget.style.boxShadow = "0 2px 8px rgba(44,74,46,0.3)";
+              e.currentTarget.style.transform = "translateY(0)";
             }}
           >
-            <div
+            <LayoutDashboard size={15} />
+            Dashboard
+          </Link>
+        ) : (
+          <>
+            {isMdUp && (
+              <Link
+                href="/login"
+                style={{
+                  fontSize: "13.5px",
+                  fontWeight: 500,
+                  color: isDark ? "rgba(200,220,200,0.85)" : "#4A6741",
+                  textDecoration: "none",
+                  padding: "9px 16px",
+                  borderRadius: "10px",
+                  transition: "all 0.18s ease",
+                  border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(74,103,65,0.2)"}`,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = isDark ? "#fff" : "#2C4A2E";
+                  e.currentTarget.style.backgroundColor = isDark
+                    ? "rgba(255,255,255,0.06)"
+                    : "rgba(44,74,46,0.06)";
+                  e.currentTarget.style.borderColor = isDark
+                    ? "rgba(255,255,255,0.15)"
+                    : "rgba(44,74,46,0.35)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = isDark
+                    ? "rgba(200,220,200,0.85)"
+                    : "#4A6741";
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.borderColor = isDark
+                    ? "rgba(255,255,255,0.08)"
+                    : "rgba(74,103,65,0.2)";
+                }}
+              >
+                Sign In
+              </Link>
+            )}
+            <Link
+              href="/signup"
               style={{
-                display: "flex",
-                flexDirection: "column",
-                padding: theme.spacing(6),
-                gap: theme.spacing(2),
+                padding: "9px 20px",
+                background: "linear-gradient(135deg, #2C4A2E 0%, #3d6640 100%)",
+                color: "#fff",
+                fontSize: "13.5px",
+                fontWeight: 600,
+                borderRadius: "10px",
+                textDecoration: "none",
+                transition: "all 0.2s ease",
+                boxShadow: "0 2px 8px rgba(44,74,46,0.3)",
+                letterSpacing: "0.01em",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = "0 4px 16px rgba(44,74,46,0.45)";
+                e.currentTarget.style.transform = "translateY(-1px)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = "0 2px 8px rgba(44,74,46,0.3)";
+                e.currentTarget.style.transform = "translateY(0)";
               }}
             >
-              {[
-                { name: "Home", path: "/" },
-                { name: "About", path: "/about" },
-                { name: "Blog", path: "/blog" },
-                { name: "Success Stories", path: "/success-stories" },
-                { name: "Contact", path: "/contact" },
-              ].map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.path}
-                  className="mobile-menu-item"
-                  style={{
-                    padding: `${theme.spacing(3)} ${theme.spacing(4)}`,
-                    fontSize: "16px",
-                    fontWeight: 500,
-                    color: isActive(item.path)
-                      ? brandColor
-                      : isDark
-                      ? theme.colors.stone[200]
-                      : theme.colors.stone[700],
-                    textDecoration: "none",
-                    borderRadius: theme.borderRadius.lg,
-                    transition: "all 0.2s",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    backgroundColor: isActive(item.path)
-                      ? isDark
-                        ? "rgba(85,130,94,0.2)"
-                        : "rgba(85,130,94,0.08)"
-                      : "transparent",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = isDark
-                      ? "rgba(255,255,255,0.05)"
-                      : "rgba(0,0,0,0.03)";
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isActive(item.path)) {
-                      e.currentTarget.style.backgroundColor = "transparent";
-                    }
-                  }}
-                >
-                  <span>{item.name}</span>
-                  {isActive(item.path) && <ChevronRight size={18} />}
-                </Link>
-              ))}
-              {!isAuthenticated && (
-                <div
-                  style={{
-                    marginTop: theme.spacing(4),
-                    paddingTop: theme.spacing(4),
-                    borderTop: `1px solid ${
-                      isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)"
-                    }`,
-                  }}
-                >
-                  <Link
-                    href="/login"
-                    style={{
-                      display: "block",
-                      padding: `${theme.spacing(3)} ${theme.spacing(4)}`,
-                      fontSize: "16px",
-                      fontWeight: 500,
-                      color: isDark ? theme.colors.stone[200] : theme.colors.stone[700],
-                      textDecoration: "none",
-                      borderRadius: theme.borderRadius.lg,
-                      transition: "background-color 0.2s",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = isDark
-                        ? "rgba(255,255,255,0.05)"
-                        : "rgba(0,0,0,0.03)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = "transparent";
-                    }}
-                  >
-                    Sign In
-                  </Link>
-                </div>
-              )}
-            </div>
-          </div>
+              {isMdUp ? "Get Started" : "Sign Up"}
+            </Link>
+          </>
         )}
-      </header>
-
+  
+        {/* Mobile menu button */}
+        {!isMdUp && (
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            style={{
+              background: isDark ? "rgba(255,255,255,0.06)" : "rgba(44,74,46,0.07)",
+              border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(44,74,46,0.15)"}`,
+              cursor: "pointer",
+              padding: "8px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "8px",
+              color: isDark ? "#a8c5a0" : "#2C4A2E",
+              transition: "all 0.18s ease",
+            }}
+          >
+            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        )}
+      </div>
+    </div>
+  
+    {/* Mobile dropdown */}
+    {!isMdUp && mobileMenuOpen && (
+      <div
+        style={{
+          position: "absolute",
+          top: "100%",
+          left: 0,
+          right: 0,
+          backgroundColor: isDark ? "rgba(20,35,20,0.98)" : "rgba(252,251,248,0.98)",
+          backdropFilter: "blur(12px)",
+          borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.07)"}`,
+          padding: `${theme.spacing(3)} ${theme.spacing(4)}`,
+          display: "flex",
+          flexDirection: "column",
+          gap: "2px",
+          zIndex: 40,
+          boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+        }}
+      >
+        {["Home", "About", "Blog", "Success Stories", "Contact"].map((label) => {
+          const href =
+            label === "Home"
+              ? "/"
+              : `/${label.toLowerCase().replace(/\s+/g, "-")}`;
+          return (
+            <Link
+              key={label}
+              href={href}
+              style={{
+                fontSize: "14px",
+                fontWeight: 500,
+                color: isDark ? "rgba(200,220,200,0.85)" : "#4A6741",
+                textDecoration: "none",
+                padding: "10px 14px",
+                borderRadius: "8px",
+                transition: "all 0.18s ease",
+              }}
+              onClick={() => setMobileMenuOpen(false)}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = isDark
+                  ? "rgba(255,255,255,0.06)"
+                  : "rgba(44,74,46,0.07)";
+                e.currentTarget.style.color = isDark ? "#fff" : "#2C4A2E";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "transparent";
+                e.currentTarget.style.color = isDark
+                  ? "rgba(200,220,200,0.85)"
+                  : "#4A6741";
+              }}
+            >
+              {label}
+            </Link>
+          );
+        })}
+  
+        {/* Mobile Sign In row */}
+        <div
+          style={{
+            marginTop: "8px",
+            paddingTop: "12px",
+            borderTop: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.07)"}`,
+            display: "flex",
+            gap: "8px",
+          }}
+        >
+          <Link
+            href="/login"
+            style={{
+              flex: 1,
+              textAlign: "center",
+              padding: "10px",
+              fontSize: "13.5px",
+              fontWeight: 500,
+              color: isDark ? "rgba(200,220,200,0.85)" : "#4A6741",
+              textDecoration: "none",
+              borderRadius: "8px",
+              border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(74,103,65,0.2)"}`,
+            }}
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Sign In
+          </Link>
+          <Link
+            href="/signup"
+            style={{
+              flex: 1,
+              textAlign: "center",
+              padding: "10px",
+              fontSize: "13.5px",
+              fontWeight: 600,
+              color: "#fff",
+              textDecoration: "none",
+              borderRadius: "8px",
+              background: "linear-gradient(135deg, #2C4A2E 0%, #3d6640 100%)",
+              boxShadow: "0 2px 8px rgba(44,74,46,0.3)",
+            }}
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Get Started
+          </Link>
+        </div>
+      </div>
+    )}
+  </nav>
       <main style={{ position: "relative", zIndex: 1 }}>
         {/* Hero Section */}
         <section

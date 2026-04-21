@@ -422,8 +422,8 @@ const Contact: React.FC = () => {
       <img
         src="/logo.png"
         style={{
-          width: "220px",
-          height: "220px",
+          width: "100px",
+          height: "100px",
           objectFit: "contain",
           transition: "transform 0.2s ease",
         }}
@@ -822,12 +822,7 @@ const Contact: React.FC = () => {
                 content: "support@enduringroots.in",
                 sub: "We reply within 24 hours",
               },
-              {
-                icon: Phone,
-                title: "Phone",
-                content: "+91 9818394549",
-                sub: "Mon-Fri, 9am-6pm IST",
-              },
+          
             ].map((item) => {
               const Icon = item.icon;
               return (

@@ -132,7 +132,7 @@ const LoginPage: React.FC = () => {
 
     try {
       const response = await axios.post(
-        "/api/auth/forgot-password",
+        "/api/auth/forget-password",
         { email: forgotEmail },
         { withCredentials: true }
       );
@@ -412,52 +412,28 @@ const LoginPage: React.FC = () => {
                 marginBottom: theme.spacing(10),
               }}
             >
+              {/* Logo (replaces text + icon) */}
               <Link
                 href="/"
                 style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: theme.spacing(2),
-                  marginBottom: theme.spacing(10),
+                  display: "inline-block",
+                  marginBottom: theme.spacing(6),
                   textDecoration: "none",
                 }}
               >
-                <div
+                <img
+                  src="/logo.png"
+                  alt="Enduring Roots"
                   style={{
-                    width: theme.spacing(10),
-                    height: theme.spacing(10),
-                    backgroundColor: isDark
-                      ? theme.colors.brand[600]
-                      : theme.colors.brand[500],
-                    borderRadius: theme.borderRadius.xl,
-                    ...flexCenter,
-                    color: theme.colors.white,
-                    fontFamily: theme.fontFamily.serif,
-                    fontWeight: "bold",
-                    fontSize: theme.fontSize["2xl"],
-                    boxShadow: theme.boxShadow.green,
-                    transition: "transform 0.2s",
+                    height: "50px",
+                    width: "auto",
+                    maxWidth: "180px",
+                    objectFit: "contain",
+                    transition: "transform 0.2s ease",
                   }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.transform = "scale(1.1)")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.transform = "scale(1)")
-                  }
-                >
-                  E
-                </div>
-                <span
-                  style={{
-                    fontSize: theme.fontSize["3xl"],
-                    fontFamily: theme.fontFamily.serif,
-                    fontWeight: "bold",
-                    color: isDark ? theme.dark.text : theme.colors.brand[950],
-                    letterSpacing: "-0.025em",
-                  }}
-                >
-                  Enduring Roots.
-                </span>
+                  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                />
               </Link>
               <h2
                 style={{

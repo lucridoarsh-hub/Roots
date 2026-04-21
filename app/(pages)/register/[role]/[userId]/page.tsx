@@ -377,50 +377,32 @@ const InviteRegisterUserPage: React.FC = () => {
                 marginBottom: theme.spacing(10),
               }}
             >
+              {/* Logo (replaces icon + text) */}
               <Link
                 href="/"
                 style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: theme.spacing(2),
-                  marginBottom: theme.spacing(10),
+                  display: "inline-block",
+                  marginBottom: theme.spacing(6),
                   textDecoration: "none",
                 }}
               >
-                <div
+                <img
+                  src="/logo.png"
+                  alt="Enduring Roots"
                   style={{
-                    width: theme.spacing(10),
-                    height: theme.spacing(10),
-                    backgroundColor: theme.colors.brand[500],
-                    borderRadius: theme.borderRadius.xl,
-                    ...flexCenter,
-                    color: theme.colors.white,
-                    fontFamily: theme.fontFamily.serif,
-                    fontWeight: "bold",
-                    fontSize: theme.fontSize["2xl"],
-                    boxShadow: theme.boxShadow.green,
-                    transition: theme.transition.fast,
+                    height: "50px",
+                    width: "auto",
+                    maxWidth: "180px",
+                    objectFit: "contain",
+                    transition: "transform 0.2s ease",
                   }}
                   onMouseEnter={(e) =>
-                    (e.currentTarget.style.transform = "scale(1.1)")
+                    (e.currentTarget.style.transform = "scale(1.05)")
                   }
                   onMouseLeave={(e) =>
                     (e.currentTarget.style.transform = "scale(1)")
                   }
-                >
-                  E
-                </div>
-                <span
-                  style={{
-                    fontSize: theme.fontSize["3xl"],
-                    fontFamily: theme.fontFamily.display,
-                    fontWeight: "bold",
-                    color: isDark ? theme.colors.white : theme.colors.brand[950],
-                    letterSpacing: "-0.025em",
-                  }}
-                >
-                  Enduring Roots.
-                </span>
+                />
               </Link>
               <h2
                 style={{
@@ -652,7 +634,9 @@ const InviteRegisterUserPage: React.FC = () => {
                       justifyContent: "center",
                       padding: 0,
                     }}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>

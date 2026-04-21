@@ -1,4 +1,3 @@
-
 export enum LifeStage {
   EARLY_YEARS = 'Early Years',
   SCHOOL_YEARS = 'School Years',
@@ -15,7 +14,6 @@ export enum MediaType {
   DOCUMENT = 'DOCUMENT',
   TEXT = "text",
 }
-
 
 export type PermissionLevel = 'VIEW' | 'COMMENT' | 'EDIT';
 
@@ -56,6 +54,7 @@ export interface HistoryEntry {
   details?: string;
   changes?: HistoryChange[];
 }
+
 type Preferences = {
   fontSize?: 'sm' | 'base' | 'lg' | 'xl';
   highContrast?: boolean;
@@ -68,17 +67,22 @@ type User = {
   preferences?: Preferences;
 };
 
+// Extended image type with altText and location
+export interface MemoryImage {
+  url: string;
+  publicId: string;
+  caption: string;
+  altText?: string;    // for accessibility
+  location?: string;   // where this specific photo was taken
+}
+
 export interface Memory {
   id: string;
   title: string;
   description: string;
   summary?: string;
   date: string;
-  images?: Array<{
-  url: string;
-  publicId: string;
-  caption: string;
-}>;
+  images?: MemoryImage[];  // updated to use MemoryImage
   year: number;
   lifeStage: LifeStage;
   tags: string[];
@@ -96,6 +100,10 @@ export interface Memory {
   
   lastEditedBy?: string;
   lastEditedAt?: number;
+
+  // New fields added for enhanced metadata
+  location?: string;     // memory-level location (e.g., "Paris, France")
+  mood?: string;         // "happy", "nostalgic", "funny", "sad", "exciting"
 }
 
 export interface BlogPost {

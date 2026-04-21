@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { User, Clock, Users, HelpCircle, LogOut, Sun, Moon, Monitor } from "lucide-react";
+import { User, Clock, Users, HelpCircle, LogOut } from "lucide-react";
 import { APP_NAME } from "../../constants";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
-import theme from "../theme"; // <-- Imported external theme (green brand)
+import theme from "../theme";
 
 // ========== MEDIA QUERY HOOK ==========
 const useMediaQuery = (query: string) => {
@@ -28,22 +28,18 @@ const useIsDark = () => {
   const systemDark = useMediaQuery("(prefers-color-scheme: dark)");
   if (themeMode === "dark") return true;
   if (themeMode === "light") return false;
-  return systemDark; // system
+  return systemDark;
 };
-
-// ========== STYLE UTILITIES ==========
-const flexCenter = { display: "flex", alignItems: "center", justifyContent: "center" } as const;
-const flexBetween = { display: "flex", alignItems: "center", justifyContent: "space-between" } as const;
 
 // ========== COMPONENT ==========
 const Sidebar: React.FC = () => {
   const { logout } = useAuth();
-  const { theme: themeMode, setTheme } = useTheme();
+  const { theme: themeMode } = useTheme();
   const router = useRouter();
   const pathname = usePathname();
   const [dynamicSettings, setDynamicSettings] = useState({
     appName: APP_NAME,
-    logoUrl: "",
+    logoUrl: "/logo.png",
   });
 
   const isDark = useIsDark();
@@ -55,7 +51,7 @@ const Sidebar: React.FC = () => {
       const parsed = JSON.parse(saved);
       setDynamicSettings({
         appName: parsed.appName || APP_NAME,
-        logoUrl: parsed.logoUrl || "",
+        logoUrl: parsed.logoUrl || "/logo.png",
       });
     }
 
@@ -65,7 +61,7 @@ const Sidebar: React.FC = () => {
         const parsed = JSON.parse(updated);
         setDynamicSettings({
           appName: parsed.appName || APP_NAME,
-          logoUrl: parsed.logoUrl || "",
+          logoUrl: parsed.logoUrl || "/logo.png",
         });
       }
     };
@@ -85,19 +81,18 @@ const Sidebar: React.FC = () => {
     { name: "Help", path: "/help", icon: HelpCircle },
   ];
 
-  // Theme-based colors
-  const sidebarBg = isDark ? theme.dark.bgCard : theme.colors.brand[900];
-  const sidebarBorder = isDark ? theme.dark.border : theme.colors.brand[800];
-  const textPrimary = isDark ? theme.dark.text : theme.colors.brand[100];
-  const textSecondary = isDark ? theme.dark.textMuted : theme.colors.brand[300];
-  const navActiveBg = isDark ? theme.colors.brand[800] : theme.colors.brand[700];
-  const navActiveText = theme.colors.white;
-  const navInactiveText = isDark ? theme.colors.brand[200] : theme.colors.brand[200];
-  const navInactiveHoverBg = isDark ? "rgba(255,255,255,0.05)" : theme.colors.brand[800];
-  const navInactiveHoverText = theme.colors.white;
-  const logoutHoverBg = isDark ? "rgba(255,255,255,0.05)" : theme.colors.brand[800];
+  // Light mode colors (professional light green)
+  const sidebarBg = isDark ? theme.dark.bgCard : theme.colors.brand[50];
+  const sidebarBorder = isDark ? theme.dark.border : theme.colors.brand[200];
+  const textPrimary = isDark ? theme.dark.text : theme.colors.brand[900];
+  const textSecondary = isDark ? theme.dark.textMuted : theme.colors.brand[700];
+  const navActiveBg = isDark ? theme.colors.brand[800] : theme.colors.brand[200];
+  const navActiveText = isDark ? theme.colors.white : theme.colors.brand[900];
+  const navInactiveText = isDark ? theme.colors.brand[200] : theme.colors.brand[700];
+  const navInactiveHoverBg = isDark ? "rgba(255,255,255,0.05)" : theme.colors.brand[100];
+  const navInactiveHoverText = isDark ? theme.colors.white : theme.colors.brand[900];
+  const logoutHoverBg = isDark ? "rgba(255,255,255,0.05)" : theme.colors.brand[100];
 
-  // Hide on mobile
   if (!isMdUp) return null;
 
   return (
@@ -122,41 +117,27 @@ const Sidebar: React.FC = () => {
         style={{
           padding: theme.spacing(6),
           borderBottom: `1px solid ${sidebarBorder}`,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          textAlign: "center",
         }}
       >
-        <h1
+        <img
+          src={dynamicSettings.logoUrl}
           style={{
-            fontSize: theme.fontSize["2xl"],
-            fontFamily: theme.fontFamily.serif,
-            fontWeight: "bold",
-            letterSpacing: "0.025em",
-            color: textPrimary,
-            display: "flex",
-            alignItems: "center",
-            gap: theme.spacing(2),
+            width: "6.5rem",
+            height: "6.5rem",
+            borderRadius: theme.borderRadius.md,
+            objectFit: "cover",
+            marginBottom: theme.spacing(3),
           }}
-        >
-          {dynamicSettings.logoUrl ? (
-            <img
-              src={dynamicSettings.logoUrl}
-              style={{
-                width: theme.spacing(8),
-                height: theme.spacing(8),
-                borderRadius: theme.borderRadius.base,
-                objectFit: "cover",
-              }}
-              alt="Logo"
-            />
-          ) : (
-            <span>🌱</span>
-          )}
-          {dynamicSettings.appName}
-        </h1>
+          alt="Logo"
+        />
         <p
           style={{
             fontSize: theme.fontSize.xs,
             color: textSecondary,
-            marginTop: theme.spacing(2),
           }}
         >
           Where memories become a legacy
@@ -189,6 +170,7 @@ const Sidebar: React.FC = () => {
                 textDecoration: "none",
                 backgroundColor: isActive ? navActiveBg : "transparent",
                 color: isActive ? navActiveText : navInactiveText,
+                fontWeight: isActive ? 600 : 400,
               }}
               onMouseEnter={(e) => {
                 if (!isActive) {
@@ -204,7 +186,7 @@ const Sidebar: React.FC = () => {
               }}
             >
               <item.icon size={20} />
-              <span style={{ fontWeight: 500 }}>{item.name}</span>
+              <span>{item.name}</span>
             </Link>
           );
         })}
@@ -225,7 +207,7 @@ const Sidebar: React.FC = () => {
             alignItems: "center",
             gap: theme.spacing(3),
             padding: `${theme.spacing(3)} ${theme.spacing(4)}`,
-            color: isDark ? theme.colors.brand[300] : theme.colors.brand[300],
+            color: isDark ? theme.colors.brand[300] : theme.colors.brand[700],
             backgroundColor: "transparent",
             border: "none",
             borderRadius: theme.borderRadius.lg,
@@ -235,11 +217,11 @@ const Sidebar: React.FC = () => {
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.backgroundColor = logoutHoverBg;
-            e.currentTarget.style.color = theme.colors.white;
+            e.currentTarget.style.color = isDark ? theme.colors.white : theme.colors.brand[900];
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.backgroundColor = "transparent";
-            e.currentTarget.style.color = isDark ? theme.colors.brand[300] : theme.colors.brand[300];
+            e.currentTarget.style.color = isDark ? theme.colors.brand[300] : theme.colors.brand[700];
           }}
         >
           <LogOut size={20} />

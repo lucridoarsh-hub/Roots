@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
 // Define the routes that require authentication
-const PROTECTED_ROUTES = ['/dashboard', '/family', '/help', '/profile'];
+const PROTECTED_ROUTES = ['/dashboard', '/family',  '/profile'];
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

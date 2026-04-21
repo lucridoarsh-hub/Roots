@@ -14,8 +14,7 @@ import { Memory, FilterState, MediaType, Reaction, LifeStage } from "../types";
 import { useAuth } from "./AuthContext";
 
 // ========== API CONFIGURATION ==========
-const API_BASE_URL = ""; // Local dev, change to production URL later
-
+const API_BASE_URL = "";
 interface MemoryContextType {
   memories: Memory[];
   filteredMemories: Memory[];
@@ -30,6 +29,7 @@ interface MemoryContextType {
   updateMemoryReactions: (memoryId: string, reactions: Reaction[]) => void;
   filterState: FilterState;
   setFilterState: React.Dispatch<React.SetStateAction<FilterState>>;
+  exportToPDF: () => Promise<void>; // ✅ New method
 }
 
 const MemoryContext = createContext<MemoryContextType | undefined>(undefined);
@@ -44,23 +44,65 @@ export const useMemories = () => {
 const transformMemory = (backend: any): Memory => {
   const memoryDate = new Date(backend.date);
 
-  // Normalize reactions: ensure type is uppercase and userId is a string
+  // Normalize reactions
   const normalizedReactions = (backend.reactions || []).map((reaction: any) => {
     let userId = reaction.userId;
-    // If userId is a populated user object, extract the _id string
     if (userId && typeof userId === 'object' && userId._id) {
       userId = userId._id.toString();
     } else if (userId && typeof userId === 'object' && userId.id) {
       userId = userId.id.toString();
     } else if (userId && typeof userId !== 'string') {
-      // Fallback: convert to string if it's an ObjectId
       userId = userId.toString();
     }
-
     return {
       userId: userId,
-      userName: reaction.userName || 'User', // optional, may not be present
-      type: reaction.type.toUpperCase(), // ✅ convert to uppercase
+      userName: reaction.userName || 'User',
+      type: reaction.type.toUpperCase(),
+    };
+  });
+
+  // Transform images with all metadata
+  const transformedImages = (backend.images || []).map((img: any) => ({
+    url: img.url,
+    publicId: img.publicId,
+    caption: img.caption || '',
+    altText: img.altText || '',
+    location: img.location || '',
+  }));
+
+  // Transform history (commits) if present
+  const transformedHistory = (backend.history || []).map((entry: any) => ({
+    editedBy: entry.editedBy
+      ? typeof entry.editedBy === 'object'
+        ? entry.editedBy.username || entry.editedBy.email || 'Unknown'
+        : entry.editedBy
+      : 'System',
+    editedAt: entry.editedAt ? new Date(entry.editedAt).toISOString() : new Date().toISOString(),
+    changes: entry.changes || 'No details provided',
+  }));
+
+  // Transform comments
+  const transformedComments = (backend.comments || []).map((comment: any) => {
+    let user = { _id: '', username: 'Unknown', profileImage: { url: '' } };
+    if (comment.userId) {
+      if (typeof comment.userId === 'object') {
+        user = {
+          _id: comment.userId._id?.toString() || '',
+          username: comment.userId.username || 'Unknown',
+          profileImage: comment.userId.profileImage || { url: '' },
+        };
+      } else {
+        user = { _id: comment.userId.toString(), username: 'User', profileImage: { url: '' } };
+      }
+    }
+    return {
+      id: comment._id,
+      userId: user._id,
+      userName: user.username,
+      userAvatar: user.profileImage?.url || '',
+      text: comment.text,
+      createdAt: comment.createdAt,
+      updatedAt: comment.updatedAt,
     };
   });
 
@@ -75,13 +117,9 @@ const transformMemory = (backend: any): Memory => {
     tags: backend.tags || [],
     mediaType: backend.images?.length ? MediaType.PHOTO : MediaType.TEXT,
     mediaUrl: backend.images?.[0]?.url || "",
-    images: (backend.images || []).map((img: any) => ({
-      url: img.url,
-      publicId: img.publicId,
-      caption: img.caption || "",
-    })),
-    reactions: normalizedReactions,  // ✅ now uppercase types, string userIds
-    comments: backend.comments || [],
+    images: transformedImages,
+    reactions: normalizedReactions,
+    comments: transformedComments,
     isPrivate: backend.isPrivate ?? false,
     createdAt: backend.createdAt
       ? (typeof backend.createdAt === "string"
@@ -91,9 +129,15 @@ const transformMemory = (backend: any): Memory => {
     isDeleted: false,
     collaborators: backend.collaborators || [],
     summary: backend.summary,
-    history: backend.history || [],
-    lastEditedBy: backend.lastEditedBy,
+    history: transformedHistory,
+    lastEditedBy: backend.lastEditedBy
+      ? typeof backend.lastEditedBy === 'object'
+        ? backend.lastEditedBy.username
+        : backend.lastEditedBy
+      : undefined,
     lastEditedAt: backend.lastEditedAt,
+    location: backend.location || '',
+    mood: backend.mood || '',
   };
 };
 
@@ -135,7 +179,6 @@ export const MemoryProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }
   }, []);
 
-  // React to authentication changes
   useEffect(() => {
     if (isAuthenticated) {
       loadMemories();
@@ -239,6 +282,42 @@ export const MemoryProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     []
   );
 
+  // ✅ UPDATED: Export to PDF (now calls endpoint with ?download=true)
+  const exportToPDF = useCallback(async () => {
+    try {
+      // ✅ Add ?download=true to get the PDF file directly
+      const response = await axios.get(`/api/auth/pdf?download=true`, {
+        withCredentials: true,
+        responseType: "blob",
+      });
+
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `memory-album-${Date.now()}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err: any) {
+      console.error("PDF export error:", err);
+      let message = "Failed to export PDF";
+      if (err.response?.data instanceof Blob) {
+        const text = await err.response.data.text();
+        try {
+          const json = JSON.parse(text);
+          message = json.message || message;
+        } catch {
+          message = text || message;
+        }
+      } else if (err.response?.data?.message) {
+        message = err.response.data.message;
+      }
+      setError(message);
+    }
+  }, []);
+
   // ========== FILTERED MEMORIES ==========
   const filteredMemories = useMemo(() => {
     return memories.filter((memory) => {
@@ -279,6 +358,7 @@ export const MemoryProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     updateMemoryReactions,
     filterState,
     setFilterState,
+    exportToPDF,
   };
 
   return <MemoryContext.Provider value={value}>{children}</MemoryContext.Provider>;

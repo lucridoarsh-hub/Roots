@@ -380,8 +380,8 @@ export default function TermsOfService() {
          <img
            src="/logo.png"
            style={{
-             width: "220px",
-             height: "220px",
+             width: "100px",
+             height: "100px",
              objectFit: "contain",
              transition: "transform 0.2s ease",
            }}

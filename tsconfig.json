@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-, "app/(pages)/dashboard/page.tsx"  ],
+, "app/(pages)/dashboard/page.tsx", "app/api/auth/memories/export/pdf/route.js"  ],
   "exclude": ["node_modules"]
 }
