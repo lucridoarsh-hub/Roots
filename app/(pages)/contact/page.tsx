@@ -445,7 +445,7 @@ const Contact: React.FC = () => {
           transform: "translateX(-50%)",
         }}
       >
-        {["Home", "About", "Blog", "Success Stories", "Contact"].map((label) => {
+        {["Home", "About", "Blog","Pricing", "Success Stories", "Contact"].map((label) => {
           const href =
             label === "Home"
               ? "/"
@@ -1210,7 +1210,7 @@ const Contact: React.FC = () => {
               },
               {
                 q: "Do you offer support in regional languages?",
-                a: "Yes, our team speaks Hindi, Tamil, Bengali, and more. Let us know your preference.",
+                a: "Yes, our team speaks English, Hindi and Punjabi. Let us know your preference.",
               },
               {
                 q: "Is there a phone number I can call?",

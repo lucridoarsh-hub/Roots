@@ -307,6 +307,7 @@ const Profile: React.FC = () => {
                 <div
                   style={{
                     width: avatarSize,
+                    marginTop : '20px',
                     height: avatarSize,
                     borderRadius: theme.borderRadius['3xl'],
                     border: `4px solid ${isDark ? theme.colors.brand[800] : theme.colors.white}`,

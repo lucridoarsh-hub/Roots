@@ -387,7 +387,7 @@ const LandingPage: React.FC = () => {
       )}
 
       {/* ===== NAVIGATION ===== */}
-   <nav
+  <nav
     style={{
       position: "relative",
       width: "100%",
@@ -452,7 +452,7 @@ const LandingPage: React.FC = () => {
             transform: "translateX(-50%)",
           }}
         >
-          {["Home", "About", "Blog", "Success Stories", "Contact"].map((label) => {
+          {["Home", "About","Pricing", "Blog", "Success Stories", "Contact"].map((label) => {
             const href =
               label === "Home"
                 ? "/"
@@ -639,7 +639,7 @@ const LandingPage: React.FC = () => {
           boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
         }}
       >
-        {["Home", "About", "Blog", "Success Stories", "Contact"].map((label) => {
+        {["Home", "About","Pricing", "Success Stories","Pricing","Blog", "Contact"].map((label) => {
           const href =
             label === "Home"
               ? "/"
@@ -1664,6 +1664,217 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
+
+ {/* Our Promise to You */}
+{/* Our Promise to You */}
+<section
+  style={{
+    paddingTop: isMdUp ? theme.spacing(20) : theme.spacing(12),
+    paddingBottom: isMdUp ? theme.spacing(20) : theme.spacing(12),
+    paddingLeft: theme.spacing(4),
+    paddingRight: theme.spacing(4),
+  }}
+>
+  <div style={{ maxWidth: "1140px", margin: "0 auto" }}>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: isMdUp ? "1fr 1fr" : "1fr",
+        gap: isMdUp ? "5rem" : "2.5rem",
+        alignItems: "start",
+      }}
+    >
+      {/* Left column */}
+      <div>
+        <div
+          style={{
+            fontSize: theme.fontSize.xs,
+            fontWeight: 600,
+            letterSpacing: "0.12em",
+            color: theme.colors.brand[600],
+            textTransform: "uppercase",
+            marginBottom: "0.75rem",
+          }}
+        >
+          Our Promise
+        </div>
+        <h2
+          style={{
+            fontFamily: theme.fontFamily.serif,
+            fontSize: isMdUp ? theme.fontSize["5xl"] : theme.fontSize["3xl"],
+            fontWeight: 800,
+            color: isDark ? theme.colors.brand[100] : theme.colors.brand[800],
+            marginBottom: "1.5rem",
+            lineHeight: 1.15,
+          }}
+        >
+          Your memories are irreplaceable. We treat them that way.
+        </h2>
+        <ul
+          style={{
+            listStyle: "none",
+            display: "flex",
+            flexDirection: "column",
+            gap: 12,
+            padding: 0,
+            margin: 0,
+          }}
+        >
+          {[
+            "Your content belongs to you — always, completely, and without exception",
+            "Your family’s memories will never be seen by anyone outside your chosen family circle",
+            "We will never sell your data, show you targeted advertisements, or use your content for any commercial purpose",
+            "We will protect your family’s history with the highest available security standards",
+            "We will build Enduring Roots to be here for generations — for you, your children, and their children",
+            "We will continue to improve the platform based on what families actually need",
+          ].map((p, i) => (
+            <li
+              key={i}
+              style={{
+                display: "flex",
+                gap: 12,
+                alignItems: "flex-start",
+                fontSize: isMdUp ? 15 : 14,
+                color: textSecondary,
+                lineHeight: 1.6,
+              }}
+            >
+              <div
+                style={{
+                  width: 22,
+                  height: 22,
+                  borderRadius: "50%",
+                  background: isDark
+                    ? theme.colors.brand[800]
+                    : theme.colors.brand[50],
+                  border: `1.5px solid ${
+                    isDark ? theme.colors.brand[600] : theme.colors.brand[200]
+                  }`,
+                  flexShrink: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: theme.colors.brand[600],
+                  fontSize: 11,
+                  fontWeight: 700,
+                  marginTop: 1,
+                }}
+              >
+                ✓
+              </div>
+              <span>{p}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Right column – Why families choose Enduring Roots (Pistle Green background) */}
+      <div
+        style={{
+          background: isDark
+            ? "#2a4a2c"           // darker pastel green for dark mode
+            : "#e6f4e8",          // pistle green (soft pastel green)
+          borderRadius: 20,
+          padding: isMdUp ? "2.5rem" : "2rem",
+          border: `1px solid ${
+            isDark ? "rgba(255,255,255,0.1)" : theme.colors.brand[200]
+          }`,
+          position: isMdUp ? "sticky" : "relative",
+          top: isMdUp ? 100 : "auto",
+          transition: "all 0.2s ease",
+        }}
+      >
+        <h4
+          style={{
+            fontFamily: theme.fontFamily.serif,
+            fontSize: isMdUp ? 22 : 18,
+            fontWeight: 700,
+            color: isDark ? theme.colors.white : theme.colors.brand[800],
+            marginBottom: "1.5rem",
+          }}
+        >
+          Why families choose Enduring Roots
+        </h4>
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 8,
+            marginBottom: "2rem",
+          }}
+        >
+          {[
+            "100% content ownership",
+            "No ads, ever",
+            "Your data stays yours",
+            "Bank-level encryption",
+            "Private & invitation-only",
+            "Multi-generation access",
+            "Export memory books",
+            "Accessible on any device",
+          ].map((pill, i) => (
+            <span
+              key={i}
+              style={{
+                background: isDark
+                  ? "rgba(0,0,0,0.3)"
+                  : "rgba(44,74,46,0.1)",
+                color: isDark
+                  ? theme.colors.brand[100]
+                  : theme.colors.brand[700],
+                fontSize: isMdUp ? 12 : 11,
+                fontWeight: 500,
+                padding: "6px 14px",
+                borderRadius: 20,
+                border: `1px solid ${
+                  isDark ? "rgba(255,255,255,0.2)" : theme.colors.brand[200]
+                }`,
+              }}
+            >
+              {pill}
+            </span>
+          ))}
+        </div>
+        <div
+          style={{
+            borderLeft: `4px solid ${theme.colors.brand[600]}`,
+            padding: isMdUp ? "1.5rem 2rem" : "1rem 1.5rem",
+            background: isDark
+              ? "rgba(0,0,0,0.2)"
+              : "rgba(255,255,255,0.7)",
+            borderRadius: "0 12px 12px 0",
+          }}
+        >
+          <p
+            style={{
+              fontFamily: theme.fontFamily.serif,
+              fontSize: isMdUp ? 22 : 18,
+              fontStyle: "italic",
+              color: isDark
+                ? theme.colors.brand[100]
+                : theme.colors.brand[800],
+              lineHeight: 1.5,
+              marginBottom: "0.75rem",
+            }}
+          >
+            "Your family's story is the most important story you will ever be
+            part of. We are honoured to help you tell it."
+          </p>
+          <cite
+            style={{
+              fontSize: isMdUp ? 13 : 12,
+              color: theme.colors.brand[600],
+              fontWeight: 600,
+              fontStyle: "normal",
+            }}
+          >
+            — Enduring Roots
+          </cite>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
       {/* How It Works - Responsive Steps */}
       <section
         id="how-it-works"

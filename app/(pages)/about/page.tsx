@@ -442,7 +442,7 @@ export default function About() {
             transform: "translateX(-50%)",
           }}
         >
-          {["Home", "About", "Blog", "Success Stories", "Contact"].map((label) => {
+          {["Home", "About", "Blog", "Pricing","Success Stories", "Contact"].map((label) => {
             const href =
               label === "Home"
                 ? "/"
@@ -931,7 +931,7 @@ export default function About() {
                       alignItems: "center",
                       justifyContent: "center",
                       fontSize: isMdUp ? 12 : 10,
-                      color: "rgba(255,255,255,0.35)",
+                      color: "white",
                     }}
                   >
                     Family Heritage Archive
@@ -945,7 +945,7 @@ export default function About() {
                       alignItems: "center",
                       justifyContent: "center",
                       fontSize: isMdUp ? 12 : 10,
-                      color: "rgba(255,255,255,0.35)",
+                      color: "white",
                     }}
                   >
                     1962 — Grandparents
@@ -953,13 +953,13 @@ export default function About() {
                   <div
                     style={{
                       borderRadius: 12,
-                      background: `linear-gradient(135deg, ${theme.colors.brand[700]}, ${theme.colors.brand[900]})`,
+                      background: `linear-gradient(135deg, ${theme.colors.brand[400]}, ${theme.colors.brand[900]})`,
                       minHeight: 130,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       fontSize: isMdUp ? 12 : 10,
-                      color: "rgba(255,255,255,0.35)",
+                      color: 'white',
                     }}
                   >
                     Childhood Memories
@@ -970,7 +970,7 @@ export default function About() {
                     textAlign: "center",
                     marginTop: "1.5rem",
                     fontSize: isMdUp ? 12 : 10,
-                    color: "rgba(255,255,255,0.4)",
+                    color: "white",
                     fontStyle: "italic",
                   }}
                 >

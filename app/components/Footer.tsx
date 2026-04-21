@@ -121,8 +121,7 @@ const Footer: React.FC = () => {
                 margin: 0,
               }}
             >
-              Preserving the stories that matter most. A secure, beautiful digital
-              sanctuary for your life's journey and family legacy.
+              Enduring Roots is a digital platform designed to help families preserve and share their life stories across generations. We exist because we believe that every family holds a universe of stories — wisdom passed down over dinner tables, photographs tucked in dusty albums, conversations half‑remembered, and traditions carried quietly through time.
             </p>
 
             {/* Social Icons - Instagram & WhatsApp */}
@@ -351,7 +350,7 @@ const Footer: React.FC = () => {
               </li>
               <li>
                 <Link
-                  href="/helps"
+                  href="/faqs"
                   onClick={scrollToTop}
                   style={{
                     color: theme.colors.brand[200],

@@ -403,7 +403,7 @@ export default function TermsOfService() {
              transform: "translateX(-50%)",
            }}
          >
-           {["Home", "About", "Blog", "Success Stories", "Contact"].map((label) => {
+           {["Home", "About", "Blog","Pricing", "Success Stories", "Contact"].map((label) => {
              const href =
                label === "Home"
                  ? "/"

@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
 
     /* ✅ Generate links */
     const registerInviteLink = `${process.env.FRONTEND_URL}/register/${role}/${familyOwnerId}`;
-    const loginInviteLink = `${process.env.FRONTEND_URL}/login/${role}/${familyOwnerId}`;
+    const loginInviteLink = `${process.env.FRONTEND_URL}/invite/login/${role}/${familyOwnerId}`;
 
     /* ✅ Check if user already exists */
     const findUser = await User.findOne({ email });
