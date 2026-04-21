@@ -377,344 +377,345 @@ export default function About() {
       )}
 
       {/* Header */}
-    <nav
-    style={{
-      position: "relative",
-      width: "100%",
-      zIndex: 50,
-      backgroundColor: isDark
-        ? "rgba(20, 35, 20, 0.95)"
-        : "rgba(252, 251, 248, 0.97)",
-      backdropFilter: "blur(12px)",
-      WebkitBackdropFilter: "blur(12px)",
-      borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.07)"}`,
-      boxShadow: isDark
-        ? "0 1px 24px rgba(0,0,0,0.4)"
-        : "0 1px 20px rgba(44, 74, 46, 0.08)",
-      transition: "all 0.3s ease",
-      top: dynamicSettings.announcement ? theme.spacing(8) : 0,
-    }}
-  >
-    <div
-      style={{
-        maxWidth: "1280px",
-        margin: "0 auto",
-        padding: `0 ${theme.spacing(8)}`,
-        height: "100px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-      }}
-    >
-      {/* Logo */}
-      <Link
-        href="/"
+      <nav
         style={{
-          display: "flex",
-          alignItems: "center",
-          textDecoration: "none",
-          flexShrink: 0,
+          position: "relative",
+          width: "100%",
+          zIndex: 50,
+          backgroundColor: isDark
+            ? "rgba(20, 35, 20, 0.95)"
+            : "rgba(252, 251, 248, 0.97)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.07)"}`,
+          boxShadow: isDark
+            ? "0 1px 24px rgba(0,0,0,0.4)"
+            : "0 1px 20px rgba(44, 74, 46, 0.08)",
+          transition: "all 0.3s ease",
+          top: dynamicSettings.announcement ? theme.spacing(8) : 0,
         }}
       >
-        <img
-          src="/logo.png"
-          style={{
-            width: "100px",
-            height: "100px",
-            objectFit: "contain",
-            transition: "transform 0.2s ease",
-          }}
-          alt="Enduring Roots Logo"
-          onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-          onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-        />
-      </Link>
-  
-      {/* Desktop nav links */}
-      {isMdUp && (
         <div
           style={{
+            maxWidth: "1280px",
+            margin: "0 auto",
+            padding: `0 ${theme.spacing(8)}`,
+            height: "100px",
             display: "flex",
             alignItems: "center",
-            gap: "2px",
-            position: "absolute",
-            left: "50%",
-            transform: "translateX(-50%)",
+            justifyContent: "space-between",
           }}
         >
-          {["Home", "About", "Blog", "Pricing","Success Stories", "Contact"].map((label) => {
-            const href =
-              label === "Home"
-                ? "/"
-                : `/${label.toLowerCase().replace(/\s+/g, "-")}`;
-            return (
-              <Link
-                key={label}
-                href={href}
-                style={{
-                  fontSize: "13.5px",
-                  fontWeight: 500,
-                  color: isDark ? "rgba(200,220,200,0.85)" : "#4A6741",
-                  textDecoration: "none",
-                  padding: "6px 14px",
-                  borderRadius: "8px",
-                  transition: "all 0.18s ease",
-                  letterSpacing: "0.01em",
-                  position: "relative",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = isDark ? "#fff" : "#2C4A2E";
-                  e.currentTarget.style.backgroundColor = isDark
-                    ? "rgba(255,255,255,0.06)"
-                    : "rgba(44,74,46,0.07)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = isDark
-                    ? "rgba(200,220,200,0.85)"
-                    : "#4A6741";
-                  e.currentTarget.style.backgroundColor = "transparent";
-                }}
-              >
-                {label}
-              </Link>
-            );
-          })}
-        </div>
-      )}
-  
-      {/* Auth buttons */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: theme.spacing(2),
-          flexShrink: 0,
-        }}
-      >
-        {isAuthenticated ? (
+          {/* Logo */}
           <Link
-            href="/dashboard"
+            href="/"
             style={{
-              padding: "9px 20px",
-              backgroundColor: "#2C4A2E",
-              color: "#fff",
-              fontSize: "13.5px",
-              fontWeight: 600,
-              borderRadius: "10px",
-              textDecoration: "none",
               display: "flex",
               alignItems: "center",
-              gap: "7px",
-              transition: "all 0.2s ease",
-              boxShadow: "0 2px 8px rgba(44,74,46,0.3)",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = "#3a5e3c";
-              e.currentTarget.style.boxShadow = "0 4px 14px rgba(44,74,46,0.4)";
-              e.currentTarget.style.transform = "translateY(-1px)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "#2C4A2E";
-              e.currentTarget.style.boxShadow = "0 2px 8px rgba(44,74,46,0.3)";
-              e.currentTarget.style.transform = "translateY(0)";
+              textDecoration: "none",
+              flexShrink: 0,
             }}
           >
-            <LayoutDashboard size={15} />
-            Dashboard
+            <img
+              src="/logo.png"
+              style={{
+                width: "100px",
+                height: "100px",
+                objectFit: "contain",
+                transition: "transform 0.2s ease",
+              }}
+              alt="Enduring Roots Logo"
+              onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+              onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+            />
           </Link>
-        ) : (
-          <>
-            {isMdUp && (
+      
+          {/* Desktop nav links */}
+          {isMdUp && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "2px",
+                position: "absolute",
+                left: "50%",
+                transform: "translateX(-50%)",
+              }}
+            >
+              {["Home", "About","Pricing", "Blog", "Success Stories", "Contact"].map((label) => {
+                const href =
+                  label === "Home"
+                    ? "/"
+                    : `/${label.toLowerCase().replace(/\s+/g, "-")}`;
+                return (
+                  <Link
+                    key={label}
+                    href={href}
+                    style={{
+                      fontSize: "13.5px",
+                      fontWeight: 500,
+                      color: isDark ? "rgba(200,220,200,0.85)" : "#4A6741",
+                      textDecoration: "none",
+                      padding: "6px 14px",
+                      borderRadius: "8px",
+                      transition: "all 0.18s ease",
+                      letterSpacing: "0.01em",
+                      position: "relative",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = isDark ? "#fff" : "#2C4A2E";
+                      e.currentTarget.style.backgroundColor = isDark
+                        ? "rgba(255,255,255,0.06)"
+                        : "rgba(44,74,46,0.07)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = isDark
+                        ? "rgba(200,220,200,0.85)"
+                        : "#4A6741";
+                      e.currentTarget.style.backgroundColor = "transparent";
+                    }}
+                  >
+                    {label}
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+      
+          {/* Auth buttons */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: theme.spacing(2),
+              flexShrink: 0,
+            }}
+          >
+            {isAuthenticated ? (
+              <Link
+                href="/dashboard"
+                style={{
+                  padding: "9px 20px",
+                  backgroundColor: "#2C4A2E",
+                  color: "#fff",
+                  fontSize: "13.5px",
+                  fontWeight: 600,
+                  borderRadius: "10px",
+                  textDecoration: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "7px",
+                  transition: "all 0.2s ease",
+                  boxShadow: "0 2px 8px rgba(44,74,46,0.3)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "#3a5e3c";
+                  e.currentTarget.style.boxShadow = "0 4px 14px rgba(44,74,46,0.4)";
+                  e.currentTarget.style.transform = "translateY(-1px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "#2C4A2E";
+                  e.currentTarget.style.boxShadow = "0 2px 8px rgba(44,74,46,0.3)";
+                  e.currentTarget.style.transform = "translateY(0)";
+                }}
+              >
+                <LayoutDashboard size={15} />
+                Dashboard
+              </Link>
+            ) : (
+              <>
+                {isMdUp && (
+                  <Link
+                    href="/login"
+                    style={{
+                      fontSize: "13.5px",
+                      fontWeight: 500,
+                      color: isDark ? "rgba(200,220,200,0.85)" : "#4A6741",
+                      textDecoration: "none",
+                      padding: "9px 16px",
+                      borderRadius: "10px",
+                      transition: "all 0.18s ease",
+                      border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(74,103,65,0.2)"}`,
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = isDark ? "#fff" : "#2C4A2E";
+                      e.currentTarget.style.backgroundColor = isDark
+                        ? "rgba(255,255,255,0.06)"
+                        : "rgba(44,74,46,0.06)";
+                      e.currentTarget.style.borderColor = isDark
+                        ? "rgba(255,255,255,0.15)"
+                        : "rgba(44,74,46,0.35)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = isDark
+                        ? "rgba(200,220,200,0.85)"
+                        : "#4A6741";
+                      e.currentTarget.style.backgroundColor = "transparent";
+                      e.currentTarget.style.borderColor = isDark
+                        ? "rgba(255,255,255,0.08)"
+                        : "rgba(74,103,65,0.2)";
+                    }}
+                  >
+                    Sign In
+                  </Link>
+                )}
+                <Link
+                  href="/signup"
+                  style={{
+                    padding: "9px 20px",
+                    background: "linear-gradient(135deg, #2C4A2E 0%, #3d6640 100%)",
+                    color: "#fff",
+                    fontSize: "13.5px",
+                    fontWeight: 600,
+                    borderRadius: "10px",
+                    textDecoration: "none",
+                    transition: "all 0.2s ease",
+                    boxShadow: "0 2px 8px rgba(44,74,46,0.3)",
+                    letterSpacing: "0.01em",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = "0 4px 16px rgba(44,74,46,0.45)";
+                    e.currentTarget.style.transform = "translateY(-1px)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = "0 2px 8px rgba(44,74,46,0.3)";
+                    e.currentTarget.style.transform = "translateY(0)";
+                  }}
+                >
+                  {isMdUp ? "Get Started" : "Sign Up"}
+                </Link>
+              </>
+            )}
+      
+            {/* Mobile menu button */}
+            {!isMdUp && (
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                style={{
+                  background: isDark ? "rgba(255,255,255,0.06)" : "rgba(44,74,46,0.07)",
+                  border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(44,74,46,0.15)"}`,
+                  cursor: "pointer",
+                  padding: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "8px",
+                  color: isDark ? "#a8c5a0" : "#2C4A2E",
+                  transition: "all 0.18s ease",
+                }}
+              >
+                {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              </button>
+            )}
+          </div>
+        </div>
+      
+        {/* Mobile dropdown */}
+        {!isMdUp && mobileMenuOpen && (
+          <div
+            style={{
+              position: "absolute",
+              top: "100%",
+              left: 0,
+              right: 0,
+              backgroundColor: isDark ? "rgba(20,35,20,0.98)" : "rgba(252,251,248,0.98)",
+              backdropFilter: "blur(12px)",
+              borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.07)"}`,
+              padding: `${theme.spacing(3)} ${theme.spacing(4)}`,
+              display: "flex",
+              flexDirection: "column",
+              gap: "2px",
+              zIndex: 40,
+              boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+            }}
+          >
+            {["Home", "About","Pricing", "Success Stories","Pricing","Blog", "Contact"].map((label) => {
+              const href =
+                label === "Home"
+                  ? "/"
+                  : `/${label.toLowerCase().replace(/\s+/g, "-")}`;
+              return (
+                <Link
+                  key={label}
+                  href={href}
+                  style={{
+                    fontSize: "14px",
+                    fontWeight: 500,
+                    color: isDark ? "rgba(200,220,200,0.85)" : "#4A6741",
+                    textDecoration: "none",
+                    padding: "10px 14px",
+                    borderRadius: "8px",
+                    transition: "all 0.18s ease",
+                  }}
+                  onClick={() => setMobileMenuOpen(false)}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = isDark
+                      ? "rgba(255,255,255,0.06)"
+                      : "rgba(44,74,46,0.07)";
+                    e.currentTarget.style.color = isDark ? "#fff" : "#2C4A2E";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "transparent";
+                    e.currentTarget.style.color = isDark
+                      ? "rgba(200,220,200,0.85)"
+                      : "#4A6741";
+                  }}
+                >
+                  {label}
+                </Link>
+              );
+            })}
+      
+            {/* Mobile Sign In row */}
+            <div
+              style={{
+                marginTop: "8px",
+                paddingTop: "12px",
+                borderTop: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.07)"}`,
+                display: "flex",
+                gap: "8px",
+              }}
+            >
               <Link
                 href="/login"
                 style={{
+                  flex: 1,
+                  textAlign: "center",
+                  padding: "10px",
                   fontSize: "13.5px",
                   fontWeight: 500,
                   color: isDark ? "rgba(200,220,200,0.85)" : "#4A6741",
                   textDecoration: "none",
-                  padding: "9px 16px",
-                  borderRadius: "10px",
-                  transition: "all 0.18s ease",
-                  border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(74,103,65,0.2)"}`,
+                  borderRadius: "8px",
+                  border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(74,103,65,0.2)"}`,
                 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = isDark ? "#fff" : "#2C4A2E";
-                  e.currentTarget.style.backgroundColor = isDark
-                    ? "rgba(255,255,255,0.06)"
-                    : "rgba(44,74,46,0.06)";
-                  e.currentTarget.style.borderColor = isDark
-                    ? "rgba(255,255,255,0.15)"
-                    : "rgba(44,74,46,0.35)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = isDark
-                    ? "rgba(200,220,200,0.85)"
-                    : "#4A6741";
-                  e.currentTarget.style.backgroundColor = "transparent";
-                  e.currentTarget.style.borderColor = isDark
-                    ? "rgba(255,255,255,0.08)"
-                    : "rgba(74,103,65,0.2)";
-                }}
+                onClick={() => setMobileMenuOpen(false)}
               >
                 Sign In
               </Link>
-            )}
-            <Link
-              href="/signup"
-              style={{
-                padding: "9px 20px",
-                background: "linear-gradient(135deg, #2C4A2E 0%, #3d6640 100%)",
-                color: "#fff",
-                fontSize: "13.5px",
-                fontWeight: 600,
-                borderRadius: "10px",
-                textDecoration: "none",
-                transition: "all 0.2s ease",
-                boxShadow: "0 2px 8px rgba(44,74,46,0.3)",
-                letterSpacing: "0.01em",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = "0 4px 16px rgba(44,74,46,0.45)";
-                e.currentTarget.style.transform = "translateY(-1px)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = "0 2px 8px rgba(44,74,46,0.3)";
-                e.currentTarget.style.transform = "translateY(0)";
-              }}
-            >
-              {isMdUp ? "Get Started" : "Sign Up"}
-            </Link>
-          </>
+              <Link
+                href="/signup"
+                style={{
+                  flex: 1,
+                  textAlign: "center",
+                  padding: "10px",
+                  fontSize: "13.5px",
+                  fontWeight: 600,
+                  color: "#fff",
+                  textDecoration: "none",
+                  borderRadius: "8px",
+                  background: "linear-gradient(135deg, #2C4A2E 0%, #3d6640 100%)",
+                  boxShadow: "0 2px 8px rgba(44,74,46,0.3)",
+                }}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Get Started
+              </Link>
+            </div>
+          </div>
         )}
-  
-        {/* Mobile menu button */}
-        {!isMdUp && (
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            style={{
-              background: isDark ? "rgba(255,255,255,0.06)" : "rgba(44,74,46,0.07)",
-              border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(44,74,46,0.15)"}`,
-              cursor: "pointer",
-              padding: "8px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: "8px",
-              color: isDark ? "#a8c5a0" : "#2C4A2E",
-              transition: "all 0.18s ease",
-            }}
-          >
-            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        )}
-      </div>
-    </div>
-  
-    {/* Mobile dropdown */}
-    {!isMdUp && mobileMenuOpen && (
-      <div
-        style={{
-          position: "absolute",
-          top: "100%",
-          left: 0,
-          right: 0,
-          backgroundColor: isDark ? "rgba(20,35,20,0.98)" : "rgba(252,251,248,0.98)",
-          backdropFilter: "blur(12px)",
-          borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.07)"}`,
-          padding: `${theme.spacing(3)} ${theme.spacing(4)}`,
-          display: "flex",
-          flexDirection: "column",
-          gap: "2px",
-          zIndex: 40,
-          boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
-        }}
-      >
-        {["Home", "About", "Blog", "Success Stories", "Contact"].map((label) => {
-          const href =
-            label === "Home"
-              ? "/"
-              : `/${label.toLowerCase().replace(/\s+/g, "-")}`;
-          return (
-            <Link
-              key={label}
-              href={href}
-              style={{
-                fontSize: "14px",
-                fontWeight: 500,
-                color: isDark ? "rgba(200,220,200,0.85)" : "#4A6741",
-                textDecoration: "none",
-                padding: "10px 14px",
-                borderRadius: "8px",
-                transition: "all 0.18s ease",
-              }}
-              onClick={() => setMobileMenuOpen(false)}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = isDark
-                  ? "rgba(255,255,255,0.06)"
-                  : "rgba(44,74,46,0.07)";
-                e.currentTarget.style.color = isDark ? "#fff" : "#2C4A2E";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "transparent";
-                e.currentTarget.style.color = isDark
-                  ? "rgba(200,220,200,0.85)"
-                  : "#4A6741";
-              }}
-            >
-              {label}
-            </Link>
-          );
-        })}
-  
-        {/* Mobile Sign In row */}
-        <div
-          style={{
-            marginTop: "8px",
-            paddingTop: "12px",
-            borderTop: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.07)"}`,
-            display: "flex",
-            gap: "8px",
-          }}
-        >
-          <Link
-            href="/login"
-            style={{
-              flex: 1,
-              textAlign: "center",
-              padding: "10px",
-              fontSize: "13.5px",
-              fontWeight: 500,
-              color: isDark ? "rgba(200,220,200,0.85)" : "#4A6741",
-              textDecoration: "none",
-              borderRadius: "8px",
-              border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(74,103,65,0.2)"}`,
-            }}
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Sign In
-          </Link>
-          <Link
-            href="/signup"
-            style={{
-              flex: 1,
-              textAlign: "center",
-              padding: "10px",
-              fontSize: "13.5px",
-              fontWeight: 600,
-              color: "#fff",
-              textDecoration: "none",
-              borderRadius: "8px",
-              background: "linear-gradient(135deg, #2C4A2E 0%, #3d6640 100%)",
-              boxShadow: "0 2px 8px rgba(44,74,46,0.3)",
-            }}
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Get Started
-          </Link>
-        </div>
-      </div>
-    )}
-  </nav>
+      </nav>
+
       <main style={{ position: "relative", zIndex: 1 }}>
         {/* Hero Section */}
         <section
@@ -846,261 +847,196 @@ export default function About() {
           ))}
         </div>
 
-        {/* Who We Are */}
-        <section style={{ padding: `${sectionPaddingY} ${sectionPaddingX}` }}>
-          <div style={{ maxWidth: 1140, margin: "0 auto" }}>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: twoColGrid,
-                gap: isMdUp ? "5rem" : "2.5rem",
-                alignItems: "center",
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    fontSize: theme.fontSize.xs,
-                    fontWeight: 600,
-                    letterSpacing: "0.12em",
-                    color: brandColor,
-                    textTransform: "uppercase",
-                    marginBottom: "0.75rem",
-                  }}
-                >
-                  Who We Are
-                </div>
-                <h2
-                  style={{
-                    fontFamily: theme.fontFamily.serif,
-                    fontSize: sectionTitleSize,
-                    fontWeight: 800,
-                    color: isDark ? theme.colors.brand[100] : theme.colors.brand[800],
-                    lineHeight: 1.15,
-                    marginBottom: "1.5rem",
-                  }}
-                >
-                  A digital sanctuary for your life's journey
-                </h2>
-                {[
-                  "Enduring Roots is a digital platform designed to help families preserve and share their life stories across generations. We exist because we believe that every family holds a universe of stories — wisdom passed down over dinner tables, photographs tucked in dusty albums, conversations half‑remembered, and traditions carried quietly through time.",
-                  "We built Enduring Roots because too many of these stories disappear. An elder passes away. A childhood home is sold. A generation grows up without knowing where they came from. The memories exist somewhere — in photographs, in the minds of family members, in the texture of old letters — but they are scattered, fragile, and at risk of being lost forever.",
-                  "Enduring Roots changes that. We give every family a beautiful, private, secure digital space to gather those memories, organise them, enrich them, and pass them on — not just as files in a folder, but as a living, breathing family narrative.",
-                ].map((p, i) => (
-                  <p
-                    key={i}
-                    style={{
-                      fontSize: isMdUp ? 16 : 14,
-                      color: textSecondary,
-                      lineHeight: 1.85,
-                      marginBottom: "1rem",
-                    }}
-                  >
-                    {p}
-                  </p>
-                ))}
-              </div>
-              <div
-                style={{
-                  background: isDark ? theme.colors.brand[800] : "#141d4a",
-                  borderRadius: 24,
-                  padding: isMdUp ? "2.5rem" : "1.5rem",
-                  position: "relative",
-                  overflow: "hidden",
-                }}
-              >
-                <div
-                  style={{
-                    position: "absolute",
-                    width: 200,
-                    height: 200,
-                    borderRadius: "50%",
-                    background: `rgba(85,130,94,0.15)`,
-                    right: -50,
-                    bottom: -50,
-                  }}
-                />
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                  <div
-                    style={{
-                      gridColumn: "span 2",
-                      borderRadius: 12,
-                      background: `linear-gradient(135deg, ${theme.colors.brand[600]}, ${theme.colors.brand[800]})`,
-                      minHeight: 90,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: isMdUp ? 12 : 10,
-                      color: "white",
-                    }}
-                  >
-                    Family Heritage Archive
-                  </div>
-                  <div
-                    style={{
-                      borderRadius: 12,
-                      background: `linear-gradient(135deg, ${theme.colors.brand[500]}, ${theme.colors.brand[700]})`,
-                      minHeight: 90,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: isMdUp ? 12 : 10,
-                      color: "white",
-                    }}
-                  >
-                    1962 — Grandparents
-                  </div>
-                  <div
-                    style={{
-                      borderRadius: 12,
-                      background: `linear-gradient(135deg, ${theme.colors.brand[400]}, ${theme.colors.brand[900]})`,
-                      minHeight: 130,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: isMdUp ? 12 : 10,
-                      color: 'white',
-                    }}
-                  >
-                    Childhood Memories
-                  </div>
-                </div>
-                <p
-                  style={{
-                    textAlign: "center",
-                    marginTop: "1.5rem",
-                    fontSize: isMdUp ? 12 : 10,
-                    color: "white",
-                    fontStyle: "italic",
-                  }}
-                >
-                  Your memories, beautifully organised and forever preserved
-                </p>
-              </div>
-            </div>
+      {/* Who We Are */}
+<section style={{ padding: `${sectionPaddingY} ${sectionPaddingX}` }}>
+  <div
+    style={{
+      maxWidth: 900,
+      margin: "0 auto",
+      textAlign: "center",
+    }}
+  >
+    {/* Heading */}
+    <div
+      style={{
+        fontSize: theme.fontSize.xs,
+        fontWeight: 600,
+        letterSpacing: "0.12em",
+        color: brandColor,
+        textTransform: "uppercase",
+        marginBottom: "0.75rem",
+      }}
+    >
+      Who We Are
+    </div>
 
-            <div
-              style={{
-                borderLeft: `4px solid ${brandColor}`,
-                padding: isMdUp ? "1.5rem 2rem" : "1rem 1.5rem",
-                background: isDark ? theme.colors.brand[800] : theme.colors.brand[50],
-                borderRadius: "0 12px 12px 0",
-                margin: "2rem 0",
-              }}
-            >
-              <p
-                style={{
-                  fontFamily: theme.fontFamily.serif,
-                  fontSize: isMdUp ? 22 : 18,
-                  fontStyle: "italic",
-                  color: isDark ? theme.colors.brand[200] : theme.colors.brand[700],
-                  lineHeight: 1.5,
-                  marginBottom: "0.75rem",
-                }}
-              >
-                "Every family has a story worth telling. Enduring Roots makes sure
-                it is never forgotten."
-              </p>
-              <cite
-                style={{
-                  fontSize: isMdUp ? 13 : 12,
-                  color: brandColor,
-                  fontWeight: 600,
-                  fontStyle: "normal",
-                }}
-              >
-                — The Enduring Roots Team
-              </cite>
-            </div>
+    <h2
+      style={{
+        fontFamily: theme.fontFamily.serif,
+        fontSize: sectionTitleSize,
+        fontWeight: 800,
+        color: isDark
+          ? theme.colors.brand[100]
+          : theme.colors.brand[800],
+        lineHeight: 1.15,
+        marginBottom: "1.5rem",
+      }}
+    >
+      A digital sanctuary for your life's journey
+    </h2>
 
-            <div
-              style={{
-                background: `linear-gradient(135deg, ${theme.colors.brand[700]} 0%, ${theme.colors.brand[600]} 100%)`,
-                borderRadius: 20,
-                padding: isMdUp ? "3rem" : "2rem",
-                textAlign: "center",
-                margin: "3rem 0",
-                position: "relative",
-                overflow: "hidden",
-              }}
-            >
-              <div
-                style={{
-                  position: "absolute",
-                  width: 300,
-                  height: 300,
-                  borderRadius: "50%",
-                  background: "rgba(255,255,255,0.04)",
-                  right: -80,
-                  top: -80,
-                }}
-              />
-              <h3
-                style={{
-                  fontFamily: theme.fontFamily.serif,
-                  fontSize: isMdUp ? 28 : 22,
-                  fontWeight: 700,
-                  color: "#fff",
-                  marginBottom: "0.75rem",
-                  position: "relative",
-                }}
-              >
-                Start Preserving Your Family's Story Today
-              </h3>
-              <p
-                style={{
-                  fontSize: isMdUp ? 15 : 14,
-                  color: "rgba(255,255,255,0.7)",
-                  marginBottom: "2rem",
-                  position: "relative",
-                }}
-              >
-                Create your free account in minutes. No credit card required.
-              </p>
-              <div
-                style={{
-                  display: "flex",
-                  gap: "1rem",
-                  justifyContent: "center",
-                  flexWrap: "wrap",
-                }}
-              >
-                <Link
-                  href="/signup"
-                  style={{
-                    background: theme.colors.amber[500],
-                    color: "#1a0a00",
-                    padding: "13px 32px",
-                    borderRadius: 10,
-                    border: "none",
-                    fontSize: isMdUp ? 15 : 14,
-                    fontWeight: 600,
-                    textDecoration: "none",
-                    display: "inline-block",
-                  }}
-                >
-                  Get Started Free →
-                </Link>
-                <Link
-                  href="/"
-                  style={{
-                    background: "transparent",
-                    color: "#fff",
-                    padding: "11px 28px",
-                    borderRadius: 10,
-                    border: "1.5px solid rgba(255,255,255,0.4)",
-                    fontSize: isMdUp ? 14 : 13,
-                    fontWeight: 500,
-                    textDecoration: "none",
-                    display: "inline-block",
-                  }}
-                >
-                  See How It Works
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
+    {/* Paragraphs */}
+    <div style={{ maxWidth: 750, margin: "0 auto" }}>
+      {[
+        "Enduring Roots is a digital platform designed to help families preserve and share their life stories across generations...",
+        "We built Enduring Roots because too many of these stories disappear...",
+        "Enduring Roots changes that. We give every family a beautiful, private, secure digital space...",
+      ].map((p, i) => (
+        <p
+          key={i}
+          style={{
+            fontSize: isMdUp ? 16 : 14,
+            color: textSecondary,
+            lineHeight: 1.85,
+            marginBottom: "1rem",
+          }}
+        >
+          {p}
+        </p>
+      ))}
+    </div>
+
+    {/* Quote */}
+    <div
+      style={{
+        borderLeft: `4px solid ${brandColor}`,
+        padding: isMdUp ? "1.5rem 2rem" : "1rem 1.5rem",
+        background: isDark
+          ? theme.colors.brand[800]
+          : theme.colors.brand[50],
+        borderRadius: "0 12px 12px 0",
+        margin: "2rem auto",
+        maxWidth: 700,
+        textAlign: "left",
+      }}
+    >
+      <p
+        style={{
+          fontFamily: theme.fontFamily.serif,
+          fontSize: isMdUp ? 22 : 18,
+          fontStyle: "italic",
+          color: isDark
+            ? theme.colors.brand[200]
+            : theme.colors.brand[700],
+          lineHeight: 1.5,
+          marginBottom: "0.75rem",
+        }}
+      >
+        "Every family has a story worth telling. Enduring Roots makes sure it is never forgotten."
+      </p>
+      <cite
+        style={{
+          fontSize: isMdUp ? 13 : 12,
+          color: brandColor,
+          fontWeight: 600,
+          fontStyle: "normal",
+        }}
+      >
+        — The Enduring Roots Team
+      </cite>
+    </div>
+
+    {/* CTA */}
+    <div
+      style={{
+        background: `linear-gradient(135deg, ${theme.colors.brand[700]} 0%, ${theme.colors.brand[600]} 100%)`,
+        borderRadius: 20,
+        padding: isMdUp ? "3rem" : "2rem",
+        textAlign: "center",
+        margin: "3rem auto",
+        maxWidth: 800,
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      <div
+        style={{
+          position: "absolute",
+          width: 300,
+          height: 300,
+          borderRadius: "50%",
+          background: "rgba(255,255,255,0.04)",
+          right: -80,
+          top: -80,
+        }}
+      />
+
+      <h3
+        style={{
+          fontFamily: theme.fontFamily.serif,
+          fontSize: isMdUp ? 28 : 22,
+          fontWeight: 700,
+          color: "#fff",
+          marginBottom: "0.75rem",
+          position: "relative",
+        }}
+      >
+        Start Preserving Your Family's Story Today
+      </h3>
+
+      <p
+        style={{
+          fontSize: isMdUp ? 15 : 14,
+          color: "rgba(255,255,255,0.7)",
+          marginBottom: "2rem",
+          position: "relative",
+        }}
+      >
+        Create your free account in minutes. No credit card required.
+      </p>
+
+      <div
+        style={{
+          display: "flex",
+          gap: "1rem",
+          justifyContent: "center",
+          flexWrap: "wrap",
+        }}
+      >
+        <Link
+          href="/signup"
+          style={{
+            background: theme.colors.amber[500],
+            color: "#1a0a00",
+            padding: "13px 32px",
+            borderRadius: 10,
+            fontSize: isMdUp ? 15 : 14,
+            fontWeight: 600,
+            textDecoration: "none",
+          }}
+        >
+          Get Started Free →
+        </Link>
+
+        <Link
+          href="/"
+          style={{
+            background: "transparent",
+            color: "#fff",
+            padding: "11px 28px",
+            borderRadius: 10,
+            border: "1.5px solid rgba(255,255,255,0.4)",
+            fontSize: isMdUp ? 14 : 13,
+            fontWeight: 500,
+            textDecoration: "none",
+          }}
+        >
+          See How It Works
+        </Link>
+      </div>
+    </div>
+  </div>
+</section>
 
         {/* The Problem We Solve */}
         <section
@@ -1733,187 +1669,7 @@ export default function About() {
           </div>
         </section>
 
-        {/* Our Promise to You */}
-        <section style={{ padding: `${sectionPaddingY} ${sectionPaddingX}` }}>
-          <div style={{ maxWidth: 1140, margin: "0 auto" }}>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: promiseGrid,
-                gap: isMdUp ? "5rem" : "2.5rem",
-                alignItems: "start",
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    fontSize: theme.fontSize.xs,
-                    fontWeight: 600,
-                    letterSpacing: "0.12em",
-                    color: brandColor,
-                    textTransform: "uppercase",
-                    marginBottom: "0.75rem",
-                  }}
-                >
-                  Our Promise
-                </div>
-                <h2
-                  style={{
-                    fontFamily: theme.fontFamily.serif,
-                    fontSize: sectionTitleSize,
-                    fontWeight: 800,
-                    color: isDark ? theme.colors.brand[100] : theme.colors.brand[800],
-                    marginBottom: "1.5rem",
-                    lineHeight: 1.15,
-                  }}
-                >
-                  Your memories are irreplaceable. We treat them that way.
-                </h2>
-                <ul
-                  style={{
-                    listStyle: "none",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 12,
-                    padding: 0,
-                    margin: 0,
-                  }}
-                >
-                  {[
-                    "Your content belongs to you — always, completely, and without exception",
-                    "Your family’s memories will never be seen by anyone outside your chosen family circle",
-                    "We will never sell your data, show you targeted advertisements, or use your content for any commercial purpose",
-                    "We will protect your family’s history with the highest available security standards",
-                    "We will build Enduring Roots to be here for generations — for you, your children, and their children",
-                    "We will continue to improve the platform based on what families actually need",
-                  ].map((p, i) => (
-                    <li
-                      key={i}
-                      style={{
-                        display: "flex",
-                        gap: 12,
-                        alignItems: "flex-start",
-                        fontSize: isMdUp ? 15 : 14,
-                        color: textSecondary,
-                        lineHeight: 1.6,
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: 22,
-                          height: 22,
-                          borderRadius: "50%",
-                          background: isDark ? theme.colors.brand[800] : theme.colors.brand[50],
-                          border: `1.5px solid ${isDark ? theme.colors.brand[600] : theme.colors.brand[200]}`,
-                          flexShrink: 0,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          color: brandColor,
-                          fontSize: 11,
-                          fontWeight: 700,
-                          marginTop: 1,
-                        }}
-                      >
-                        ✓
-                      </div>
-                      <span>{p}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div
-                style={{
-                  background: cardBg,
-                  borderRadius: 20,
-                  padding: isMdUp ? "2.5rem" : "2rem",
-                  border: `1px solid ${borderColor}`,
-                  position: isMdUp ? "sticky" : "relative",
-                  top: isMdUp ? 100 : "auto",
-                }}
-              >
-                <h4
-                  style={{
-                    fontFamily: theme.fontFamily.serif,
-                    fontSize: isMdUp ? 22 : 18,
-                    fontWeight: 700,
-                    color: isDark ? theme.colors.brand[100] : theme.colors.brand[800],
-                    marginBottom: "1.5rem",
-                  }}
-                >
-                  Why families choose Enduring Roots
-                </h4>
-                <div
-                  style={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: 8,
-                    marginBottom: "2rem",
-                  }}
-                >
-                  {[
-                    "100% content ownership",
-                    "No ads, ever",
-                    "Your data stays yours",
-                    "Bank-level encryption",
-                    "Private & invitation-only",
-                    "Multi-generation access",
-                    "Export memory books",
-                    "Accessible on any device",
-                  ].map((pill, i) => (
-                    <span
-                      key={i}
-                      style={{
-                        background: isDark ? theme.colors.brand[800] : theme.colors.brand[50],
-                        color: isDark ? theme.colors.brand[300] : theme.colors.brand[600],
-                        fontSize: isMdUp ? 12 : 11,
-                        fontWeight: 500,
-                        padding: "6px 14px",
-                        borderRadius: 20,
-                        border: `1px solid ${isDark ? theme.colors.brand[600] : theme.colors.brand[200]}`,
-                      }}
-                    >
-                      {pill}
-                    </span>
-                  ))}
-                </div>
-                <div
-                  style={{
-                    borderLeft: `4px solid ${brandColor}`,
-                    padding: isMdUp ? "1.5rem 2rem" : "1rem 1.5rem",
-                    background: isDark ? theme.colors.brand[800] : theme.colors.brand[50],
-                    borderRadius: "0 12px 12px 0",
-                  }}
-                >
-                  <p
-                    style={{
-                      fontFamily: theme.fontFamily.serif,
-                      fontSize: isMdUp ? 22 : 18,
-                      fontStyle: "italic",
-                      color: isDark ? theme.colors.brand[200] : theme.colors.brand[700],
-                      lineHeight: 1.5,
-                      marginBottom: "0.75rem",
-                    }}
-                  >
-                    "Your family's story is the most important story you will ever
-                    be part of. We are honoured to help you tell it."
-                  </p>
-                  <cite
-                    style={{
-                      fontSize: isMdUp ? 13 : 12,
-                      color: brandColor,
-                      fontWeight: 600,
-                      fontStyle: "normal",
-                    }}
-                  >
-                    — Enduring Roots
-                  </cite>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
+      
         {/* Final CTA */}
         <section
           style={{
