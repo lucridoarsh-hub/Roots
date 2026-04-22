@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { Providers } from "./components/providers";
 import { NotificationProvider } from "@/context/NotificationContext";
@@ -7,7 +8,7 @@ import { MemoryProvider } from "@/context/MemoryContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { FamilyProvider } from "@/context/FamilyContext";
 import AuthGuard from "@/context/AuthGuardContext";
-import { SessionExpiryChecker } from "./components/SessionExpiryChecker"; // Import the checker
+import { SessionExpiryChecker } from "./components/SessionExpiryChecker";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,7 +23,8 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Enduring Roots — Preserve Your Life's Most Cherished Memories",
   description:
-    "Enduring Roots helps you capture, organize, and share your personal legacy. Build a beautiful timeline of life memories to pass down to the people who matter most.",
+    "Enduring Roots helps you capture, organize, and share your personal legacy. Build a beautiful timeline of life memories to pass down to the people who matter most",
+
   keywords: [
     "memory preservation",
     "digital legacy",
@@ -32,8 +34,14 @@ export const metadata: Metadata = {
     "legacy platform",
     "memory journal",
   ],
+
   authors: [{ name: "Enduring Roots" }],
   metadataBase: new URL("https://www.enduringroots.in"),
+
+  // ✅ GOOGLE VERIFICATION ADDED HERE
+  verification: {
+    google: "314dd88d8cb4af27",
+  },
 
   icons: {
     icon: "/logo.png",
@@ -44,6 +52,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
+
   robots: {
     index: true,
     follow: true,
@@ -79,19 +88,36 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "G-F1LJ58HM1S";
+
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        
+        {/* ✅ Google Analytics */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_ID}');
+          `}
+        </Script>
+
         <Providers>
           <MemoryProvider>
             <NotificationProvider>
               <ThemeProvider>
                 <FamilyProvider>
                   <AuthGuard>
-                    <SessionExpiryChecker /> {/* Add the checker here */}
+                    <SessionExpiryChecker />
                     {children}
                   </AuthGuard>
                 </FamilyProvider>
